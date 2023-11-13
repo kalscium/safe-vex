@@ -1,0 +1,24 @@
+{
+    "py/object": "pros.conductor.project.Project",
+    "py/state": {
+        "project_name": "bot_go_brr",
+        "target": "v5",
+        "templates": {
+            "kernel": {
+                "location": "",
+                "metadata": {
+                    "origin": "pros-mainline",
+                    "output": "target/armv7a-vex-eabi/release/bot_go_brr.bin"
+                },
+                "name": "kernel",
+                "py/object": "pros.conductor.templates.local_template.LocalTemplate",
+                "supported_kernels": null,
+                "system_files": [],
+                "target": "v5",
+                "user_files": [],
+                "version": "3.3.1"
+            }
+        },
+        "upload_options": {}
+    }
+}
