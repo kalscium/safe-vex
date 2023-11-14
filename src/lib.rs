@@ -8,3 +8,4 @@ pub mod vex_rt;
 pub mod context;
 pub mod bot;
 pub mod macros;
+pub mod prelude;

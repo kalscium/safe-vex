@@ -1,24 +1,22 @@
 use vex_rt::{robot, prelude::Peripherals};
+use crate::context::Context;
 
-pub struct Robot<T: Bot + Sync + Send + 'static>(T);
+pub struct Robot<T: Bot + Sync + Send + 'static> {
+    custom: T,
+    context: Context,
+}
 
 pub trait Bot {
-    fn new() -> Self;
+    fn new(context: &Context) -> Self;
 }
 
 impl<T: Bot + Sync + Send + 'static> robot::Robot for Robot<T> {
     #[inline]
     fn new(peripherals: Peripherals) -> Self {
-        Self(T::new())
-    }
-}
-
-struct Dave {
-    
-}
-
-impl Bot for Dave {
-    fn new() -> Self {
-        Self {}
+        let context = Context::new(peripherals);
+        Self {
+            custom: T::new(&context),
+            context,
+        }
     }
 }
