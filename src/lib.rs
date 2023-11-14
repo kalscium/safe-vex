@@ -5,3 +5,6 @@ extern crate alloc;
 
 pub mod pile;
 pub mod vex_rt;
+pub mod context;
+pub mod bot;
+pub mod macros;
