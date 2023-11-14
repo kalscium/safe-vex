@@ -9,3 +9,4 @@ pub mod context;
 pub mod bot;
 pub mod macros;
 pub mod prelude;
+pub mod bind;
