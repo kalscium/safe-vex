@@ -28,6 +28,6 @@ impl Context {
 
     #[inline]
     pub fn controller<'a>(&'a self, this: &'a Mutex<Self>) -> Controller {
-        Controller::new(&this, &self.perph.master_controller)
+        Controller::new(this, &self.perph.master_controller)
     }
 }
