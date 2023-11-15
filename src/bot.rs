@@ -3,22 +3,27 @@ use core::time::Duration;
 use vex_rt::{robot, prelude::Peripherals, rtos::{Mutex, Loop}, select};
 use crate::context::Context;
 
-pub type TickType = u16;
+/// The time between ticks (runtime cycles)
 pub const TICK_SPEED: u64 = 50;
 
+/// A safe translation layer to convert the user defined Bot into a vex competition Robot struct.
 pub struct Robot<T: Bot + Sync + Send + 'static> {
     custom: T,
     context: Mutex<Context>,
 }
 
 pub trait Bot {
+    /// Creates a new instance of a bot
     fn new(ctx: &Mutex<Context>) -> Self;
+    /// Run each tick (runtime cycle) of `opcontrol`
     #[allow(unused_variables)]
-    fn opcontrol(&mut self, ctx: &Mutex<Context>, tick: TickType) {}
+    fn opcontrol(&mut self, ctx: &Mutex<Context>) {}
+    /// Run each tick (runtime cycle) of `autonomous`
     #[allow(unused_variables)]
-    fn autonomous(&mut self, ctx: &Mutex<Context>, tick: TickType) {}
+    fn autonomous(&mut self, ctx: &Mutex<Context>) {}
+    /// Run each tick (runtime cycle) of `autonomous`
     #[allow(unused_variables)]
-    fn disabled(&mut self, ctx: &Mutex<Context>, tick: TickType) {}
+    fn disabled(&mut self, ctx: &Mutex<Context>) {}
 }
 
 macro_rules! vex_map {
@@ -26,14 +31,13 @@ macro_rules! vex_map {
         #[inline]
         fn $name(&mut self, ctx: vex_rt::prelude::Context) {
             let mut l = Loop::new(Duration::from_millis(TICK_SPEED));
-            let mut tick: TickType = 0;
             loop {
-                self.custom.$name(&self.context, tick);
+                self.custom.$name(&self.context);
 
                 select! {
                     _ = ctx.done() => break,
                     _ = l.select() => {
-                        tick += 1;
+                        self.context.lock().tick += 1;
                         continue;
                     },
                 }

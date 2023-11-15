@@ -1,6 +1,7 @@
 use vex_rt::{motor::{EncoderUnits, Gearset, Motor as VexMotor, MotorError}, rtos::Mutex};
 use crate::{context::Context, log::Log, bind::Bind};
 
+/// A safe wrapper & abstraction of a vex vrc motor
 pub struct Motor<'a> {
     context: &'a Mutex<Context>,
     motor: Option<VexMotor>,
@@ -12,6 +13,7 @@ pub struct Motor<'a> {
 }
 
 impl<'a> Motor<'a> {
+    /// Builds a new motor safely from a context, port, gear_ratio, encoder unit and if it is reversed or not.
     #[inline]
     pub fn build_motor(context: &'a Mutex<Context>, port: u8, gear_ratio: Gearset, unit: EncoderUnits, reverse: bool) -> Self {
         let mut this = Self {
@@ -28,6 +30,7 @@ impl<'a> Motor<'a> {
         this
     }
 
+    /// Tries to build motor, logs if it can't
     #[inline]
     fn build_inner_motor(&mut self) {
         if self.motor.is_none() {
@@ -39,6 +42,7 @@ impl<'a> Motor<'a> {
         }
     }
 
+    /// Moves the motor by a specific voltage safely
     #[inline]
     pub fn move_voltage(&mut self, voltage: i32) {
         if let Some(x) = &mut self.motor {
@@ -56,6 +60,7 @@ impl Bind for Motor<'_> {
     type Input = VexMotor;
     type Output = Result<(), MotorError>;
 
+    /// Safely gives access to the underlying vex motor safely
     #[inline]
     fn bind(&mut self, f: &'static mut impl FnMut(&Self::Input) -> Self::Output) {
         if let Some(x) = &mut self.motor {
