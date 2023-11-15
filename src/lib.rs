@@ -11,3 +11,4 @@ pub mod macros;
 pub mod prelude;
 pub mod bind;
 pub mod motor;
+pub mod log;
