@@ -11,6 +11,8 @@ pub struct Controller<'a> {
 
 macro_rules! button {
     ($name:ident) => {
+        /// Safely gets the activation of a button on the controller.
+        /// Returns `false` if controller is disconnected
         #[inline]
         pub fn $name(&self) -> bool {
             match self.controller.$name.is_pressed() {
@@ -37,6 +39,8 @@ macro_rules! button {
 
 macro_rules! joystick {
     ($name:ident) => {
+        /// Safely gets the current state of a joystick.
+        /// Returns the default state if the controller is disconnected
         #[inline]
         pub fn $name(&self) -> JoyStick {
             match (self.controller.$name.get_x(), self.controller.$name.get_y()) {
@@ -60,6 +64,7 @@ macro_rules! joystick {
 }
 
 impl<'a> Controller<'a> {
+    /// Gets the current state of the controller
     #[inline]
     pub fn new(context: &'a Mutex<Context>, controller: &'a VexControl) -> Self {
         Self {

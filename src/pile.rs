@@ -1,15 +1,18 @@
 use alloc::{vec::Vec, boxed::Box};
 
-/// The addres used by the pile to index logs (limits how many unique logs you can have)
+/// The address used by the pile to index logs (limits how many unique logs you can have)
 pub type Addr = u8;
+/// The type used to count the occurances of an address
 pub type AddrCounter = u8;
 
+/// An extremely memory-efficient data-structure for holding recurring entries (like logs for example)
 pub struct Pile<T: PartialEq> {
     namespace: Vec<T>,
     order: Vec<(Addr, AddrCounter)>,
 }
 
 impl<T: PartialEq> Pile<T> {
+    /// Creates a new pile
     #[inline]
     pub fn new() -> Self {
         Self {
@@ -18,7 +21,7 @@ impl<T: PartialEq> Pile<T> {
         }
     }
 
-    /// Pushes a specified item onto the top of a pile
+    /// Pushes a specified item onto the top of the pile
     #[inline]
     pub fn push(&mut self, item: T) {
         let addr = self.namespace.iter()
