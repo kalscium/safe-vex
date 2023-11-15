@@ -12,3 +12,6 @@ pub mod prelude;
 pub mod bind;
 pub mod motor;
 pub mod log;
+pub mod controller;
+
+pub use crate::vex_rt::rtos::Mutex;
