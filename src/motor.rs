@@ -1,5 +1,5 @@
 use vex_rt::{motor::{EncoderUnits, Gearset, Motor as VexMotor, MotorError}, rtos::Mutex};
-use crate::{context::Context, log::Log};
+use crate::{context::Context, log::Log, bind::Bind};
 
 pub struct Motor<'a> {
     context: &'a Mutex<Context>,
@@ -50,9 +50,14 @@ impl<'a> Motor<'a> {
             }
         } else { self.build_inner_motor() }
     }
+}
+
+impl Bind for Motor<'_> {
+    type Input = VexMotor;
+    type Output = Result<(), MotorError>;
 
     #[inline]
-    pub fn get_motor(&mut self, f: &'static impl Fn(&mut VexMotor) -> Result<(), MotorError>) {
+    fn bind(&mut self, f: &'static mut impl FnMut(&Self::Input) -> Self::Output) {
         if let Some(x) = &mut self.motor {
             if f(x).is_err() && !self.logged_disconnect {
                 self.logged_disconnect = true;

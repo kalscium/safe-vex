@@ -1,6 +1,7 @@
 pub trait Bind {
     type Input;
-    fn bind(&self, f: &'static impl FnMut(Self::Input));
+    type Output;
+    fn bind(&mut self, f: &'static mut impl FnMut(&Self::Input) -> Self::Output);
 }
 
 #[macro_export]
