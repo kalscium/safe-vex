@@ -5,7 +5,6 @@ use crate::{context::Context, log::Log};
 pub struct Controller<'a> {
     context: &'a Mutex<Context>,
     controller: &'a VexControl,
-    logged_disconnect: bool
 }
 
 macro_rules! button {
@@ -14,15 +13,17 @@ macro_rules! button {
         pub fn $name(&mut self) -> bool {
             match self.controller.$name.is_pressed() {
                 Ok(x) => {
-                    if self.logged_disconnect {
-                        self.context.lock().log(Log::ControllerConnect);
-                    } self.logged_disconnect = false;
+                    let context = &mut self.context.lock();
+                    if context.logged_controller_disconnect {
+                        context.log(Log::ControllerConnect);
+                    } context.logged_controller_disconnect = false;
                     x
                 },
                 Err(_) => {
-                    if !self.logged_disconnect {
-                        self.context.lock().log(Log::ControllerDisconnect);
-                        self.logged_disconnect = true;
+                    let context = &mut self.context.lock();
+                    if !context.logged_controller_disconnect {
+                        context.log(Log::ControllerDisconnect);
+                        context.logged_controller_disconnect = true;
                     }
 
                     false
@@ -34,11 +35,10 @@ macro_rules! button {
 
 impl<'a> Controller<'a> {
     #[inline]
-    pub fn new(context: &'a Mutex<Context>, controller: &'a VexControl) -> Self {
+    pub const fn new(context: &'a Mutex<Context>, controller: &'a VexControl) -> Self {
         Self {
             controller,
             context,
-            logged_disconnect: false,
         }
     }
 

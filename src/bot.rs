@@ -1,5 +1,5 @@
 use vex_rt::{robot, prelude::Peripherals, rtos::Mutex};
-use crate::context::Context;
+use crate::{context::Context, controller::Controller};
 
 pub struct Robot<T: Bot + Sync + Send + 'static> {
     custom: T,

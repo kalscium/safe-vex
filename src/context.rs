@@ -4,6 +4,7 @@ use crate::{log::{Logger, Log}, controller::Controller};
 pub struct Context {
     perph: Peripherals,
     logger: Logger,
+    pub logged_controller_disconnect: bool,
 }
 
 impl Context {
@@ -11,6 +12,7 @@ impl Context {
         Self {
             perph,
             logger: Logger::new(),
+            logged_controller_disconnect: false,
         }
     }
 
