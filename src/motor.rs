@@ -44,7 +44,7 @@ impl<'a> Motor<'a> {
         if let Some(x) = &mut self.motor {
             if x.move_voltage(voltage).is_err() && !self.logged_disconnect {
                 self.logged_disconnect = true;
-                self.context.lock().log(Log::MotorError(self.port));
+                self.context.lock().log(Log::MotorDisconnect(self.port));
             } else if self.logged_disconnect {
                 self.context.lock().log(Log::MotorConnect(self.port));
             }
@@ -61,7 +61,7 @@ impl Bind for Motor<'_> {
         if let Some(x) = &mut self.motor {
             if f(x).is_err() && !self.logged_disconnect {
                 self.logged_disconnect = true;
-                self.context.lock().log(Log::MotorError(self.port));
+                self.context.lock().log(Log::MotorDisconnect(self.port));
             } else if self.logged_disconnect {
                 self.context.lock().log(Log::MotorConnect(self.port));
             }
