@@ -1,3 +1,5 @@
+//! > A safe, reliable and comprehensive wrapper around the vex-rt library that will never panic!
+
 #![no_std]
 #![no_main]
 
