@@ -62,7 +62,7 @@ impl Bind for Motor<'_> {
 
     /// Safely gives access to the underlying vex motor safely
     #[inline]
-    fn bind(&mut self, f: &'static mut impl FnMut(&Self::Input) -> Self::Output) {
+    fn bind(&mut self, mut f: impl FnMut(&mut Self::Input) -> Self::Output) {
         if let Some(x) = &mut self.motor {
             if f(x).is_err() && !self.logged_disconnect {
                 self.logged_disconnect = true;
