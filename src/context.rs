@@ -31,7 +31,7 @@ impl Context {
         self.logger.push(log);
     }
 
-    /// Wipes the logs in the lop pile and also prints them to the console screen
+    /// Wipes the logs in the log pile and also prints them to the console screen
     #[inline]
     pub fn flush_logs(&mut self) {
         self.logger.flush(|log, i| {
