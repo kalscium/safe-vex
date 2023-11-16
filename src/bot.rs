@@ -27,9 +27,10 @@ pub trait Bot<'a> {
 }
 
 macro_rules! vex_map {
-    ($name:ident) => {
+    ($name:ident, $log:ident) => {
         #[inline]
         fn $name(&mut self, context: vex_rt::prelude::Context) {
+            self.context.lock().log($crate::log::Log::$log);
             let mut l = Loop::new(Duration::from_millis(TICK_SPEED));
             loop {
                 self.custom.$name(&self.context);
@@ -56,7 +57,7 @@ impl<T: for <'a> Bot<'a> + Sync + Send + 'static> robot::Robot for Robot<T> {
         }
     }
 
-    vex_map!(opcontrol);
-    vex_map!(autonomous);
-    vex_map!(disabled);
+    vex_map!(opcontrol, OpControl);
+    vex_map!(autonomous, Autonomous);
+    vex_map!(disabled, Disabled);
 }
