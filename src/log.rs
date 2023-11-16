@@ -11,5 +11,8 @@ pub enum Log {
     MotorDisconnect(u8),
     ControllerDisconnect,
     ControllerConnect,
+    Autonomous,
+    OpControl,
+    Disabled,
     Other(String),
 }

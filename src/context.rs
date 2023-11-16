@@ -1,5 +1,6 @@
-use vex_rt::prelude::Peripherals;
-use crate::{log::{Logger, Log}, controller::Controller};
+use alloc::string::ToString;
+use vex_rt::{prelude::Peripherals, io::println};
+use crate::{log::{Logger, Log}, controller::Controller, colour_format};
 
 pub type TickType = u16;
 
@@ -33,7 +34,19 @@ impl Context {
     /// Wipes the logs in the lop pile and also prints them to the console screen
     #[inline]
     pub fn flush_logs(&mut self) {
-        todo!();
+        self.logger.flush(|log, i| {
+            let tick = colour_format![blue("( "), yellow(&i.to_string()), blue(" ) ")];
+            println!("{}", match log {
+                Log::Other(x) => colour_format![raw(&tick), cyan("Custom Log"), blue(": "), none(x)],
+                Log::Autonomous => colour_format![raw(&tick), cyan("Autonomous period "), green("started")],
+                Log::OpControl => colour_format![raw(&tick), cyan("Driver Control period "), green("started")],
+                Log::Disabled => colour_format![raw(&tick), cyan("Disabled period "), green("started")],
+                Log::ControllerDisconnect => colour_format![raw(&tick), cyan("Controller "), red("disconnect")],
+                Log::ControllerConnect => colour_format![raw(&tick), cyan("Controller "), green("connected")],
+                Log::MotorDisconnect(port) => colour_format![raw(&tick), cyan("Motor disconnected "), blue("at "), cyan("port "), yellow(&port.to_string())],
+                Log::MotorConnect(port) => colour_format![raw(&tick), cyan("Motor connected "), blue("at "), cyan("port "), yellow(&port.to_string())],
+            });
+        });
     }
 
     /// Gets the current state of the controller safely

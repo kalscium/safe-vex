@@ -9,3 +9,4 @@ pub use crate::vex_rt::io::println;
 pub use crate::motor::Motor;
 pub use crate::controller::Controller;
 pub use crate::bind::Bind;
+pub use crate::colour_format;
