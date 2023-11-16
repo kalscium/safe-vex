@@ -14,7 +14,7 @@ pub struct Robot<T: for <'a> Bot<'a> + Sync + Send + 'static> {
 
 pub trait Bot<'a> {
     /// Creates a new instance of a bot
-    fn new(context: &Mutex<Context>) -> Self;
+    fn new(context: &'a Mutex<Context>) -> Self;
     /// Run each tick (runtime cycle) of `opcontrol`
     #[allow(unused_variables)]
     fn opcontrol(&'a mut self, context: &'a Mutex<Context>) {}
