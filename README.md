@@ -9,10 +9,13 @@ you will need:
 1. A rust toolchain managed by `rustup`
 2. An `arm-none-eabi` toolchain
 3. The `pros-cli` installed throught `pip`
+
 then:
-1. Clone the `safe-vex` project [template](https://github.com/GreenChild04/safe-vex-template) by running this command: ```sh
+1. Clone the `safe-vex` project [template](https://github.com/GreenChild04/safe-vex-template) by running the following command:
+```sh
 git clone https://github.com/GreenChild04/safe-vex-template.git
 ```
 2. Enter the newly cloned directory
 3. Turn on and connect to the vex v5 brain
 4. Run `cargo run --release` while connected to the v5 brain
+5. Your robot should now be up and running :D
