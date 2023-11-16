@@ -7,23 +7,23 @@ use crate::context::Context;
 pub const TICK_SPEED: u64 = 50;
 
 /// A safe translation layer to convert the user defined Bot into a vex competition Robot struct.
-pub struct Robot<T: Bot + Sync + Send + 'static> {
+pub struct Robot<T: for <'a> Bot<'a> + Sync + Send + 'static> {
     custom: T,
     context: Mutex<Context>,
 }
 
-pub trait Bot {
+pub trait Bot<'a> {
     /// Creates a new instance of a bot
     fn new(context: &Mutex<Context>) -> Self;
     /// Run each tick (runtime cycle) of `opcontrol`
     #[allow(unused_variables)]
-    fn opcontrol(&mut self, context: &Mutex<Context>) {}
+    fn opcontrol(&'a mut self, context: &'a Mutex<Context>) {}
     /// Run each tick (runtime cycle) of `autonomous`
     #[allow(unused_variables)]
-    fn autonomous(&mut self, context: &Mutex<Context>) {}
+    fn autonomous(&'a mut self, context: &'a Mutex<Context>) {}
     /// Run each tick (runtime cycle) of `autonomous`
     #[allow(unused_variables)]
-    fn disabled(&mut self, context: &Mutex<Context>) {}
+    fn disabled(&'a mut self, context: &'a Mutex<Context>) {}
 }
 
 macro_rules! vex_map {
@@ -46,7 +46,7 @@ macro_rules! vex_map {
     }
 }
 
-impl<T: Bot + Sync + Send + 'static> robot::Robot for Robot<T> {
+impl<T: for <'a> Bot<'a> + Sync + Send + 'static> robot::Robot for Robot<T> {
     #[inline]
     fn new(peripherals: Peripherals) -> Self {
         let context = Mutex::new(Context::new(peripherals));
