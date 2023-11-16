@@ -1,11 +1,11 @@
-use vex_rt::{prelude::Peripherals, rtos::Mutex};
+use vex_rt::prelude::Peripherals;
 use crate::{log::{Logger, Log}, controller::Controller};
 
 pub type TickType = u16;
 
 /// The context (current state) of the robot's execution
 pub struct Context {
-    perph: Peripherals,
+    pub(crate) perph: Peripherals,
     logger: Logger,
     /// if it has been logged yet that the controller has disconnected
     pub logged_controller_disconnect: bool,
@@ -38,7 +38,7 @@ impl Context {
 
     /// Gets the current state of the controller safely
     #[inline]
-    pub fn controller<'a>(&'a self, this: &'a Mutex<Self>) -> Controller {
-        Controller::new(this, &self.perph.master_controller)
+    pub fn controller<'a>(&'a mut self) -> Controller {
+        Controller::new(self)
     }
 }

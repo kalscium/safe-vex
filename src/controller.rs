@@ -1,33 +1,27 @@
 pub mod joystick;
 
-use vex_rt::{controller::Controller as VexControl, rtos::Mutex};
 use crate::{context::Context, log::Log};
 use self::joystick::JoyStick;
 
-pub struct Controller<'a> {
-    context: &'a Mutex<Context>,
-    controller: &'a VexControl,
-}
+pub struct Controller<'a>(&'a mut Context);
 
 macro_rules! button {
     ($name:ident) => {
         /// Safely gets the activation of a button on the controller.
         /// Returns `false` if controller is disconnected
         #[inline]
-        pub fn $name(&self) -> bool {
-            match self.controller.$name.is_pressed() {
+        pub fn $name(&mut self) -> bool {
+            match self.0.perph.master_controller.$name.is_pressed() {
                 Ok(x) => {
-                    let context = &mut self.context.lock();
-                    if context.logged_controller_disconnect {
-                        context.log(Log::ControllerConnect);
-                        context.logged_controller_disconnect = false;
+                    if self.0.logged_controller_disconnect {
+                        self.0.log(Log::ControllerConnect);
+                        self.0.logged_controller_disconnect = false;
                     } x
                 },
                 Err(_) => {
-                    let context = &mut self.context.lock();
-                    if !context.logged_controller_disconnect {
-                        context.log(Log::ControllerDisconnect);
-                        context.logged_controller_disconnect = true;
+                    if !self.0.logged_controller_disconnect {
+                        self.0.log(Log::ControllerDisconnect);
+                        self.0.logged_controller_disconnect = true;
                     }
 
                     false
@@ -42,20 +36,18 @@ macro_rules! joystick {
         /// Safely gets the current state of a joystick.
         /// Returns the default state if the controller is disconnected
         #[inline]
-        pub fn $name(&self) -> JoyStick {
-            match (self.controller.$name.get_x(), self.controller.$name.get_y()) {
+        pub fn $name(&mut self) -> JoyStick {
+            match (self.0.perph.master_controller.$name.get_x(), self.0.perph.master_controller.$name.get_y()) {
                 (Ok(x), Ok(y)) => {
-                    let mut context = self.context.lock();
-                    if context.logged_controller_disconnect {
-                        context.log(Log::ControllerConnect);
-                        context.logged_controller_disconnect = false;
+                    if self.0.logged_controller_disconnect {
+                        self.0.log(Log::ControllerConnect);
+                        self.0.logged_controller_disconnect = false;
                     } JoyStick { x, y }
                 },
                 _ => {
-                    let mut context = self.context.lock();
-                    if !context.logged_controller_disconnect {
-                        context.log(Log::ControllerDisconnect);
-                        context.logged_controller_disconnect = true;
+                    if !self.0.logged_controller_disconnect {
+                        self.0.log(Log::ControllerDisconnect);
+                        self.0.logged_controller_disconnect = true;
                     } JoyStick { x: 0, y: 0 }
                 },
             }
@@ -66,11 +58,8 @@ macro_rules! joystick {
 impl<'a> Controller<'a> {
     /// Gets the current state of the controller
     #[inline]
-    pub fn new(context: &'a Mutex<Context>, controller: &'a VexControl) -> Self {
-        Self {
-            controller,
-            context,
-        }
+    pub(crate) fn new(context: &'a mut Context) -> Self {
+        Self(context)
     }
 
     button!(a);
