@@ -8,8 +8,8 @@ pub type TickType = u16;
 pub struct Context {
     pub(crate) perph: Peripherals,
     logger: Logger,
-    /// if it has been logged yet that the controller has disconnected
-    pub logged_controller_disconnect: bool,
+    /// Detects if the controller is disconnected in the current runtime cycle
+    pub is_controller_disconnected: bool,
     /// The current tick (cycle) within the robot's execution
     pub tick: TickType,
 }
@@ -20,7 +20,7 @@ impl Context {
         Self {
             perph,
             logger: Logger::new(),
-            logged_controller_disconnect: false,
+            is_controller_disconnected: false,
             tick: 0,
         }
     }

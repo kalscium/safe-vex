@@ -13,15 +13,15 @@ macro_rules! button {
         pub fn $name(&mut self) -> bool {
             match self.0.perph.master_controller.$name.is_pressed() {
                 Ok(x) => {
-                    if self.0.logged_controller_disconnect {
+                    if self.0.is_controller_disconnected {
                         self.0.log(Log::ControllerConnect);
-                        self.0.logged_controller_disconnect = false;
+                        self.0.is_controller_disconnected = false;
                     } x
                 },
                 Err(_) => {
-                    if !self.0.logged_controller_disconnect {
+                    if !self.0.is_controller_disconnected {
                         self.0.log(Log::ControllerDisconnect);
-                        self.0.logged_controller_disconnect = true;
+                        self.0.is_controller_disconnected = true;
                     }
 
                     false
@@ -39,15 +39,15 @@ macro_rules! joystick {
         pub fn $name(&mut self) -> JoyStick {
             match (self.0.perph.master_controller.$name.get_x(), self.0.perph.master_controller.$name.get_y()) {
                 (Ok(x), Ok(y)) => {
-                    if self.0.logged_controller_disconnect {
+                    if self.0.is_controller_disconnected {
                         self.0.log(Log::ControllerConnect);
-                        self.0.logged_controller_disconnect = false;
+                        self.0.is_controller_disconnected = false;
                     } JoyStick { x, y }
                 },
                 _ => {
-                    if !self.0.logged_controller_disconnect {
+                    if !self.0.is_controller_disconnected {
                         self.0.log(Log::ControllerDisconnect);
-                        self.0.logged_controller_disconnect = true;
+                        self.0.is_controller_disconnected = true;
                     } JoyStick { x: 0, y: 0 }
                 },
             }
