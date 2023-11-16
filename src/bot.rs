@@ -14,28 +14,28 @@ pub struct Robot<T: Bot + Sync + Send + 'static> {
 
 pub trait Bot {
     /// Creates a new instance of a bot
-    fn new(ctx: &Mutex<Context>) -> Self;
+    fn new(context: &Mutex<Context>) -> Self;
     /// Run each tick (runtime cycle) of `opcontrol`
     #[allow(unused_variables)]
-    fn opcontrol(&mut self, ctx: &Mutex<Context>) {}
+    fn opcontrol(&mut self, context: &Mutex<Context>) {}
     /// Run each tick (runtime cycle) of `autonomous`
     #[allow(unused_variables)]
-    fn autonomous(&mut self, ctx: &Mutex<Context>) {}
+    fn autonomous(&mut self, context: &Mutex<Context>) {}
     /// Run each tick (runtime cycle) of `autonomous`
     #[allow(unused_variables)]
-    fn disabled(&mut self, ctx: &Mutex<Context>) {}
+    fn disabled(&mut self, context: &Mutex<Context>) {}
 }
 
 macro_rules! vex_map {
     ($name:ident) => {
         #[inline]
-        fn $name(&mut self, ctx: vex_rt::prelude::Context) {
+        fn $name(&mut self, context: vex_rt::prelude::Context) {
             let mut l = Loop::new(Duration::from_millis(TICK_SPEED));
             loop {
                 self.custom.$name(&self.context);
 
                 select! {
-                    _ = ctx.done() => break,
+                    _ = context.done() => break,
                     _ = l.select() => {
                         self.context.lock().tick += 1;
                         continue;
