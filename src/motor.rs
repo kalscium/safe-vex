@@ -9,7 +9,7 @@ pub struct Motor<'a> {
     gear_ratio: Gearset,
     unit: EncoderUnits,
     reverse: bool,
-    logged_disconnect: bool,
+    is_motor_disconnected: bool,
 }
 
 impl<'a> Motor<'a> {
@@ -23,7 +23,7 @@ impl<'a> Motor<'a> {
             unit,
             reverse,
             motor: None,
-            logged_disconnect: false,
+            is_motor_disconnected: false,
         };
 
         this.build_inner_motor();
@@ -37,7 +37,7 @@ impl<'a> Motor<'a> {
             if let Ok(x) = unsafe { VexMotor::new(self.port, self.gear_ratio, self.unit, self.reverse) } {
                 self.motor = Some(x);
                 self.context.lock().log(Log::MotorConnect(self.port));
-                self.logged_disconnect = false;
+                self.is_motor_disconnected = false;
             }
         }
     }
@@ -46,10 +46,10 @@ impl<'a> Motor<'a> {
     #[inline]
     pub fn move_voltage(&mut self, voltage: i32) {
         if let Some(x) = &mut self.motor {
-            if x.move_voltage(voltage).is_err() && !self.logged_disconnect {
-                self.logged_disconnect = true;
+            if x.move_voltage(voltage).is_err() && !self.is_motor_disconnected {
+                self.is_motor_disconnected = true;
                 self.context.lock().log(Log::MotorDisconnect(self.port));
-            } else if self.logged_disconnect {
+            } else if self.is_motor_disconnected {
                 self.context.lock().log(Log::MotorConnect(self.port));
             }
         } else { self.build_inner_motor() }
@@ -64,10 +64,10 @@ impl Bind for Motor<'_> {
     #[inline]
     fn bind(&mut self, mut f: impl FnMut(&mut Self::Input) -> Self::Output) {
         if let Some(x) = &mut self.motor {
-            if f(x).is_err() && !self.logged_disconnect {
-                self.logged_disconnect = true;
+            if f(x).is_err() && !self.is_motor_disconnected {
+                self.is_motor_disconnected = true;
                 self.context.lock().log(Log::MotorDisconnect(self.port));
-            } else if self.logged_disconnect {
+            } else if self.is_motor_disconnected {
                 self.context.lock().log(Log::MotorConnect(self.port));
             }
         } else { self.build_inner_motor() }
