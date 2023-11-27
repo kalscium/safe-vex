@@ -1,9 +1,9 @@
-use vex_rt::{motor::{EncoderUnits, Gearset, Motor as VexMotor, MotorError}, rtos::Mutex};
+use vex_rt::motor::{EncoderUnits, Gearset, Motor as VexMotor, MotorError};
 use crate::{context::Context, log::Log, bind::Bind};
 
 /// A safe wrapper & abstraction of a vex vrc motor
 pub struct Motor<'a> {
-    context: &'a Mutex<Context>,
+    context: &'a Context,
     motor: Option<VexMotor>,
     port: u8,
     gear_ratio: Gearset,
@@ -15,7 +15,7 @@ pub struct Motor<'a> {
 impl<'a> Motor<'a> {
     /// Builds a new motor safely from a context, port, gear_ratio, encoder unit and if it is reversed or not.
     #[inline]
-    pub fn build_motor(context: &'a Mutex<Context>, port: u8, gear_ratio: Gearset, unit: EncoderUnits, reverse: bool) -> Self {
+    pub fn build_motor(context: &'a Context, port: u8, gear_ratio: Gearset, unit: EncoderUnits, reverse: bool) -> Self {
         let mut this = Self {
             context,
             port,
@@ -36,7 +36,7 @@ impl<'a> Motor<'a> {
         if self.motor.is_none() {
             if let Ok(x) = unsafe { VexMotor::new(self.port, self.gear_ratio, self.unit, self.reverse) } {
                 self.motor = Some(x);
-                self.context.lock().log(Log::MotorConnect(self.port));
+                self.context.log(Log::MotorConnect(self.port));
                 self.is_motor_disconnected = false;
             }
         }
@@ -48,9 +48,9 @@ impl<'a> Motor<'a> {
         if let Some(x) = &mut self.motor {
             if x.move_voltage(voltage).is_err() && !self.is_motor_disconnected {
                 self.is_motor_disconnected = true;
-                self.context.lock().log(Log::MotorDisconnect(self.port));
+                self.context.log(Log::MotorDisconnect(self.port));
             } else if self.is_motor_disconnected {
-                self.context.lock().log(Log::MotorConnect(self.port));
+                self.context.log(Log::MotorConnect(self.port));
             }
         } else { self.build_inner_motor() }
     }
@@ -66,9 +66,9 @@ impl Bind for Motor<'_> {
         if let Some(x) = &mut self.motor {
             if f(x).is_err() && !self.is_motor_disconnected {
                 self.is_motor_disconnected = true;
-                self.context.lock().log(Log::MotorDisconnect(self.port));
+                self.context.log(Log::MotorDisconnect(self.port));
             } else if self.is_motor_disconnected {
-                self.context.lock().log(Log::MotorConnect(self.port));
+                self.context.log(Log::MotorConnect(self.port));
             }
         } else { self.build_inner_motor() }
     }
