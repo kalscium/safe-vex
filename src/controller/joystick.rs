@@ -5,9 +5,9 @@ pub struct JoyStick {
 }
 
 impl JoyStick {
-    /// Steps/Limits/Claps whatever you call it; it makes it so that the joystick has a minimum amount of activation or else it is dropped to zero (to avoid stick-drift).
+    /// Clamps/steps the joystick so it has to have a minimum amount of activation before being picked up (to avoid stick-drift).
     #[inline]
-    pub fn step(mut self, min: u8) -> Self {
+    pub fn clamp(mut self, min: u8) -> Self {
         if self.x.unsigned_abs() < min { self.x = 0 }
         if self.y.unsigned_abs() < min { self.y = 0 }
         self
