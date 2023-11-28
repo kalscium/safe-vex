@@ -1,9 +1,8 @@
 use vex_rt::motor::{EncoderUnits, Gearset, Motor as VexMotor, MotorError};
-use crate::{context::Context, log::Log, bind::Bind};
+use crate::{context::Context, log::Log};
 
 /// A safe wrapper & abstraction of a vex vrc motor
-pub struct Motor<'a> {
-    context: &'a Context,
+pub struct Motor {
     motor: Option<VexMotor>,
     port: u8,
     gear_ratio: Gearset,
@@ -12,12 +11,11 @@ pub struct Motor<'a> {
     is_motor_disconnected: bool,
 }
 
-impl<'a> Motor<'a> {
+impl Motor {
     /// Builds a new motor safely from a context, port, gear_ratio, encoder unit and if it is reversed or not.
     #[inline]
-    pub fn build_motor(context: &'a Context, port: u8, gear_ratio: Gearset, unit: EncoderUnits, reverse: bool) -> Self {
+    pub fn build_motor(context: &Context, port: u8, gear_ratio: Gearset, unit: EncoderUnits, reverse: bool) -> Self {
         let mut this = Self {
-            context,
             port,
             gear_ratio,
             unit,
@@ -26,17 +24,17 @@ impl<'a> Motor<'a> {
             is_motor_disconnected: false,
         };
 
-        this.build_inner_motor();
+        this.build_inner_motor(context);
         this
     }
 
     /// Tries to build motor, logs if it can't
     #[inline]
-    fn build_inner_motor(&mut self) {
+    fn build_inner_motor(&mut self, context: &Context) {
         if self.motor.is_none() {
             if let Ok(x) = unsafe { VexMotor::new(self.port, self.gear_ratio, self.unit, self.reverse) } {
                 self.motor = Some(x);
-                self.context.log(Log::MotorConnect(self.port));
+                context.log(Log::MotorConnect(self.port));
                 self.is_motor_disconnected = false;
             }
         }
@@ -44,32 +42,27 @@ impl<'a> Motor<'a> {
 
     /// Moves the motor by a specific voltage safely
     #[inline]
-    pub fn move_voltage(&mut self, voltage: i32) {
+    pub fn move_voltage(&mut self, context: &Context, voltage: i32) {
         if let Some(x) = &mut self.motor {
             if x.move_voltage(voltage).is_err() && !self.is_motor_disconnected {
                 self.is_motor_disconnected = true;
-                self.context.log(Log::MotorDisconnect(self.port));
+                context.log(Log::MotorDisconnect(self.port));
             } else if self.is_motor_disconnected {
-                self.context.log(Log::MotorConnect(self.port));
+                context.log(Log::MotorConnect(self.port));
             }
-        } else { self.build_inner_motor() }
+        } else { self.build_inner_motor(context) }
     }
-}
 
-impl Bind for Motor<'_> {
-    type Input = VexMotor;
-    type Output = Result<(), MotorError>;
-
-    /// Safely gives access to the underlying vex motor safely
+    /// Moves the motor by a specific voltage safely
     #[inline]
-    fn bind(&mut self, mut f: impl FnMut(&mut Self::Input) -> Self::Output) {
+    pub fn inner_motor(&mut self, context: &Context, mut f: impl FnMut(&mut VexMotor) -> Result<(), MotorError>) {
         if let Some(x) = &mut self.motor {
             if f(x).is_err() && !self.is_motor_disconnected {
                 self.is_motor_disconnected = true;
-                self.context.log(Log::MotorDisconnect(self.port));
+                context.log(Log::MotorDisconnect(self.port));
             } else if self.is_motor_disconnected {
-                self.context.log(Log::MotorConnect(self.port));
+                context.log(Log::MotorConnect(self.port));
             }
-        } else { self.build_inner_motor() }
+        } else { self.build_inner_motor(context) }
     }
 }
