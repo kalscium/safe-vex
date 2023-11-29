@@ -44,10 +44,13 @@ impl Motor {
     #[inline]
     pub fn move_voltage(&mut self, context: &Context, voltage: i32) {
         if let Some(x) = &mut self.motor {
-            if x.move_voltage(voltage).is_err() && !self.is_motor_disconnected {
-                self.is_motor_disconnected = true;
-                context.log(Log::MotorDisconnect(self.port));
+            if x.move_voltage(voltage).is_err() {
+                if !self.is_motor_disconnected {
+                    self.is_motor_disconnected = true;
+                    context.log(Log::MotorDisconnect(self.port));
+                }
             } else if self.is_motor_disconnected {
+                self.is_motor_disconnected = false;
                 context.log(Log::MotorConnect(self.port));
             }
         } else { self.build_inner_motor(context) }
