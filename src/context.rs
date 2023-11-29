@@ -34,18 +34,20 @@ impl Context {
     /// Wipes the logs in the log pile and also prints them to the console screen
     #[inline]
     pub fn flush_logs(&mut self) {
+        let mut tick = 0u32;
         self.logger.lock().flush(|log, i| {
-            let tick = colour_format![blue("( "), yellow(&i.to_string()), blue(" ) ")];
+            let tick_str = colour_format![blue("( "), yellow(&(tick as f64/1000f64).to_string()), yellow("s"), blue(" ) ")];
             println!("{}", match log {
-                Log::Other(x) => colour_format![raw(&tick), cyan("Custom Log"), blue(": "), none(x)],
-                Log::Autonomous => colour_format![raw(&tick), cyan("Autonomous period "), green("started")],
-                Log::OpControl => colour_format![raw(&tick), cyan("Driver Control period "), green("started")],
-                Log::Disabled => colour_format![raw(&tick), cyan("Disabled period "), green("started")],
-                Log::ControllerDisconnect => colour_format![raw(&tick), cyan("Controller "), red("disconnect")],
-                Log::ControllerConnect => colour_format![raw(&tick), cyan("Controller "), green("connected")],
-                Log::MotorDisconnect(port) => colour_format![raw(&tick), cyan("Motor disconnected "), blue("at "), cyan("port "), yellow(&port.to_string())],
-                Log::MotorConnect(port) => colour_format![raw(&tick), cyan("Motor connected "), blue("at "), cyan("port "), yellow(&port.to_string())],
+                Log::Other(x) => colour_format![raw(&tick_str), cyan("Custom Log"), blue(": "), none(x)],
+                Log::Autonomous => colour_format![raw(&tick_str), cyan("Autonomous period "), green("started")],
+                Log::OpControl => colour_format![raw(&tick_str), cyan("Driver Control period "), green("started")],
+                Log::Disabled => colour_format![raw(&tick_str), cyan("Disabled period "), green("started")],
+                Log::ControllerDisconnect => colour_format![raw(&tick_str), cyan("Controller "), red("disconnect")],
+                Log::ControllerConnect => colour_format![raw(&tick_str), cyan("Controller "), green("connected")],
+                Log::MotorDisconnect(port) => colour_format![raw(&tick_str), cyan("Motor disconnected "), blue("at "), cyan("port "), yellow(&port.to_string())],
+                Log::MotorConnect(port) => colour_format![raw(&tick_str), cyan("Motor connected "), blue("at "), cyan("port "), yellow(&port.to_string())],
             });
+            tick += i as u32;
         });
     }
 
