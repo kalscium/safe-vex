@@ -44,7 +44,7 @@ impl<T: PartialEq> Pile<T> {
 
     /// Flushes the data on a pile while iterating through it (like map)
     #[inline]
-    pub fn flush(&mut self, f: impl Fn(&T, AddrCounter)) {
+    pub fn flush(&mut self, mut f: impl FnMut(&T, AddrCounter)) {
         for (addr, i) in self.order.iter() {
             let x = self.namespace.get(*addr as usize);
             if let Some(x) = x { f(x, *i) }
