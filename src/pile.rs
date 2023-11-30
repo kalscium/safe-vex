@@ -14,7 +14,7 @@ pub struct Pile<T: PartialEq> {
 impl<T: PartialEq> Pile<T> {
     /// Creates a new pile
     #[inline]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             namespace: Vec::new(),
             order: Vec::new(),
@@ -48,6 +48,32 @@ impl<T: PartialEq> Pile<T> {
         for (addr, i) in self.order.iter() {
             let x = self.namespace.get(*addr as usize);
             if let Some(x) = x { f(x, *i) }
+        }
+
+        self.order = Vec::new(); // clears all of the pile's data
+    }
+
+    /// Flushes the data on the pile into a vector
+    #[inline]
+    pub fn flush_into<'a>(&'a mut self, out: &mut Vec<(&'a T, AddrCounter)>) {
+        for (addr, i) in self.order.iter() {
+            let x = self.namespace.get(*addr as usize);
+            if let Some(x) = x { out.push((x, *i)) }
+        }
+
+        self.order = Vec::new(); // clears all of the pile's data
+    }
+
+    /// Flushes the data on the pile while iterating through each item
+    #[inline]
+    pub fn flush_each(&mut self, mut f: impl FnMut(&T)) {
+        for (addr, i) in self.order.iter() {
+            let x = self.namespace.get(*addr as usize);
+            if let Some(x) = x {
+                for _ in 0..*i {
+                    f(x);
+                }
+            }
         }
 
         self.order = Vec::new(); // clears all of the pile's data
