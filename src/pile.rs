@@ -64,6 +64,19 @@ impl<T: PartialEq> Pile<T> {
         self.order = Vec::new(); // clears all of the pile's data
     }
 
+    /// Flushes the ata on the pile into an owned object and returns it
+    #[inline]
+    pub fn flush_owned<'a>(&'a mut self) -> Box<[(&'a T, AddrCounter)]> {
+        let mut out = Vec::new();
+        for (addr, i) in self.order.iter() {
+            let x = self.namespace.get(*addr as usize);
+            if let Some(x) = x { out.push((x, *i)) }
+        }
+
+        self.order = Vec::new(); // clears all of the pile's data
+        out.into_boxed_slice()
+    }
+
     /// Flushes the data on the pile while iterating through each item
     #[inline]
     pub fn flush_each(&mut self, mut f: impl FnMut(&T)) {
