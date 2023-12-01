@@ -35,6 +35,7 @@ impl Context {
     #[inline]
     pub fn flush_logs(&mut self) {
         let mut tick = 0u32;
+        println!("{}", colour_format![blue("\n==="), cyan(" Context  Robot Logs "), blue("===")]);
         self.logger.lock().flush(|log, i| {
             let tick_str = colour_format![blue("( "), yellow(&(tick as f64/1000f64).to_string()), yellow("s"), blue(" ) ")];
             println!("{}", match log {
