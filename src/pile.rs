@@ -3,7 +3,7 @@ use alloc::{vec::Vec, boxed::Box};
 /// The address used by the pile to index logs (limits how many unique logs you can have)
 pub type Addr = u16;
 /// The type used to count the occurances of an address
-pub type AddrCounter = u8;
+pub type AddrCounter = u16;
 
 /// An extremely memory-efficient data-structure for holding recurring entries (like logs for example)
 pub struct Pile<T: PartialEq> {
