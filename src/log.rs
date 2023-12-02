@@ -14,5 +14,6 @@ pub enum Log {
     Autonomous,
     OpControl,
     Disabled,
+    Nothing,
     Other(String),
 }

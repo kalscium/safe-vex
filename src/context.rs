@@ -47,6 +47,7 @@ impl Context {
                 Log::ControllerConnect => colour_format![raw(&tick_str), cyan("Controller "), green("connected")],
                 Log::MotorDisconnect(port) => colour_format![raw(&tick_str), cyan("Motor disconnected "), blue("at "), cyan("port "), yellow(&port.to_string())],
                 Log::MotorConnect(port) => colour_format![raw(&tick_str), cyan("Motor connected "), blue("at "), cyan("port "), yellow(&port.to_string())],
+                Log::Nothing => return,
             });
             tick += i as u32;
         });
