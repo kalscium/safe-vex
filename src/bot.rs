@@ -33,6 +33,7 @@ macro_rules! vex_map {
             self.context.log($crate::log::Log::$log);
             let mut l = Loop::new(Duration::from_millis(TICK_SPEED));
             loop {
+                self.context.log($crate::log::Log::Nothing);
                 self.custom.$name(&mut self.context);
 
                 select! {
