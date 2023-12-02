@@ -66,7 +66,7 @@ impl<T: PartialEq> Pile<T> {
 
     /// Flushes the ata on the pile into an owned object and returns it
     #[inline]
-    pub fn flush_owned<'a>(&'a mut self) -> Box<[(&'a T, AddrCounter)]> {
+    pub fn flush_owned(&mut self) -> Box<[(&'_ T, AddrCounter)]> {
         let mut out = Vec::new();
         for (addr, i) in self.order.iter() {
             let x = self.namespace.get(*addr as usize);

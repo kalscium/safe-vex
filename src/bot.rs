@@ -17,13 +17,13 @@ pub trait Bot<'a> {
     fn new(context: &'a Context) -> Self;
     /// Run each tick (runtime cycle) of `opcontrol`
     #[allow(unused_variables)]
-    fn opcontrol(&'a mut self, context: &'a mut Context) {}
+    fn opcontrol(&'a self, context: &'a mut Context) {}
     /// Run each tick (runtime cycle) of `autonomous`
     #[allow(unused_variables)]
-    fn autonomous(&'a mut self, context: &'a mut Context) {}
+    fn autonomous(&'a self, context: &'a mut Context) {}
     /// Run each tick (runtime cycle) of `autonomous`
     #[allow(unused_variables)]
-    fn disabled(&'a mut self, context: &'a mut Context) {}
+    fn disabled(&'a self, context: &'a mut Context) {}
 }
 
 macro_rules! vex_map {
