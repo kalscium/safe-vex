@@ -1,6 +1,6 @@
 [package]
 name = "safe-vex"
-version = "2.1.0-alpha"
+version = "2.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "A modular, reliable and comprehensive wrapper around the vex-rt library that never crashes."
@@ -12,6 +12,9 @@ categories = [ "no-std", "external-ffi-bindings", "hardware-support", "api-bindi
 [lib]
 name = "safe_vex"
 path = "src/lib.rs"
+
+[features]
+simulate = []
 
 [dependencies]
 vex-rt = "0.15.1"
