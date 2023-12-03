@@ -9,7 +9,7 @@ pub const TICK_SPEED: u64 = 50;
 /// A safe translation layer to convert the user defined Bot into a vex competition Robot struct.
 pub struct Robot<T: for <'a> Bot<'a> + Sync + Send + 'static> {
     custom: Mutex<T>,
-    context: Mutex<Context>,
+    context: Context,
 }
 
 pub trait Bot<'a> {
@@ -17,10 +17,10 @@ pub trait Bot<'a> {
     fn new(context: &'a Context) -> Self;
     /// Run each tick (runtime cycle) of `opcontrol`
     #[allow(unused_variables)]
-    fn opcontrol(&'a self, context: &'a Mutex<Context>) {}
+    fn opcontrol(&'a self, context: &'a Context) {}
     /// Run each tick (runtime cycle) of `autonomous`
     #[allow(unused_variables)]
-    fn autonomous(&'a self, context: &'a Mutex<Context>) {}
+    fn autonomous(&'a self, context: &'a Context) {}
 }
 
 #[cfg(not(feature = "simulate"))]
@@ -28,16 +28,15 @@ macro_rules! vex_map {
     ($name:ident, $log:ident) => {
         #[inline]
         fn $name(&mut self, context: vex_rt::prelude::Context) {
-            self.context.lock().log($crate::log::Log::$log);
+            self.context.log($crate::log::Log::$log);
             let mut l = Loop::new(Duration::from_millis(TICK_SPEED));
             loop {
-                self.context.lock().log($crate::log::Log::Nothing);
+                self.context.log($crate::log::Log::Nothing);
                 self.custom.lock().$name(&self.context);
 
                 select! {
                     _ = context.done() => break,
                     _ = l.select() => {
-                        self.context.lock().tick += 1;
                         continue;
                     },
                 }
@@ -53,7 +52,7 @@ impl<T: for <'a> Bot<'a> + Sync + Send + 'static> robot::Robot for Robot<T> {
         let context = Context::new(peripherals);
         Self {
             custom: Mutex::new(T::new(&context)),
-            context: Mutex::new(context),
+            context,
         }
     }
 
@@ -62,7 +61,7 @@ impl<T: for <'a> Bot<'a> + Sync + Send + 'static> robot::Robot for Robot<T> {
 
     #[inline]
     fn disabled<'a>(&mut self, _ctx: vex_rt::prelude::Context) {
-        self.context.lock().log(Log::Disabled);
+        self.context.log(Log::Disabled);
     }
 
     #[inline]
@@ -82,17 +81,18 @@ impl<T: for <'a> Bot<'a> + Sync + Send + 'static> robot::Robot for Robot<T> {
 
     #[inline]
     fn opcontrol(&mut self, _ctx: vex_rt::prelude::Context) {
-        self.context.lock().log(Log::Disabled);
-        self.context.lock().log(Log::Autonomous);
+        self.context.log(Log::Disabled);
+        self.context.log(Log::Autonomous);
 
         let mut l = Loop::new(Duration::from_millis(TICK_SPEED));
         let mut opcontrol = false;
+        let mut tick = 0u16;
         loop {
-            self.context.lock().log(Log::Nothing);
+            self.context.log(Log::Nothing);
 
-            if !opcontrol && self.context.lock().tick >= 15 * 1000 / TICK_SPEED as u16 {
-                self.context.lock().log(Log::Disabled);
-                self.context.lock().log(Log::OpControl);
+            if !opcontrol && tick >= 15 * 1000 / TICK_SPEED as u16 {
+                self.context.log(Log::Disabled);
+                self.context.log(Log::OpControl);
                 opcontrol = true;
             }
 
@@ -104,7 +104,7 @@ impl<T: for <'a> Bot<'a> + Sync + Send + 'static> robot::Robot for Robot<T> {
 
             select! {
                 _ = l.select() => {
-                    self.context.lock().tick += 1;
+                    tick += 1;
                     continue;
                 },
             }

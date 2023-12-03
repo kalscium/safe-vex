@@ -3,7 +3,11 @@ pub mod joystick;
 use crate::{context::Context, log::Log};
 use self::joystick::JoyStick;
 
-pub struct Controller<'a>(&'a mut Context);
+pub struct Controller<'a> {
+    context: &'a Context,
+    /// Detects if the controller is disconnected in the current runtime cycle
+    pub is_controller_disconnected: bool,
+}
 
 macro_rules! button {
     ($name:ident) => {
@@ -11,17 +15,17 @@ macro_rules! button {
         /// Returns `false` if controller is disconnected
         #[inline]
         pub fn $name(&mut self) -> bool {
-            match self.0.perph.master_controller.$name.is_pressed() {
+            match self.context.perph.master_controller.$name.is_pressed() {
                 Ok(x) => {
-                    if self.0.is_controller_disconnected {
-                        self.0.log(Log::ControllerConnect);
-                        self.0.is_controller_disconnected = false;
+                    if self.is_controller_disconnected {
+                        self.context.log(Log::ControllerConnect);
+                        self.is_controller_disconnected = false;
                     } x
                 },
                 Err(_) => {
-                    if !self.0.is_controller_disconnected {
-                        self.0.log(Log::ControllerDisconnect);
-                        self.0.is_controller_disconnected = true;
+                    if !self.is_controller_disconnected {
+                        self.context.log(Log::ControllerDisconnect);
+                        self.is_controller_disconnected = true;
                     }
 
                     false
@@ -37,17 +41,17 @@ macro_rules! joystick {
         /// Returns the default state if the controller is disconnected
         #[inline]
         pub fn $name(&mut self) -> JoyStick {
-            match (self.0.perph.master_controller.$name.get_x(), self.0.perph.master_controller.$name.get_y()) {
+            match (self.context.perph.master_controller.$name.get_x(), self.context.perph.master_controller.$name.get_y()) {
                 (Ok(x), Ok(y)) => {
-                    if self.0.is_controller_disconnected {
-                        self.0.log(Log::ControllerConnect);
-                        self.0.is_controller_disconnected = false;
+                    if self.is_controller_disconnected {
+                        self.context.log(Log::ControllerConnect);
+                        self.is_controller_disconnected = false;
                     } JoyStick { x, y }
                 },
                 _ => {
-                    if !self.0.is_controller_disconnected {
-                        self.0.log(Log::ControllerDisconnect);
-                        self.0.is_controller_disconnected = true;
+                    if !self.is_controller_disconnected {
+                        self.context.log(Log::ControllerDisconnect);
+                        self.is_controller_disconnected = true;
                     } JoyStick { x: 0, y: 0 }
                 },
             }
@@ -58,8 +62,11 @@ macro_rules! joystick {
 impl<'a> Controller<'a> {
     /// Gets the current state of the controller
     #[inline]
-    pub(crate) fn new(context: &'a mut Context) -> Self {
-        Self(context)
+    pub fn new(context: &'a Context) -> Self {
+        Self {
+            context,
+            is_controller_disconnected: false,
+        }
     }
 
     button!(a);

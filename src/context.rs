@@ -1,6 +1,6 @@
 use alloc::string::ToString;
 use vex_rt::{prelude::Peripherals, io::println, rtos::Mutex};
-use crate::{log::{Logger, Log}, controller::Controller, colour_format, bot::TICK_SPEED};
+use crate::{log::{Logger, Log}, colour_format, bot::TICK_SPEED};
 
 pub type TickType = u16;
 
@@ -8,10 +8,6 @@ pub type TickType = u16;
 pub struct Context {
     pub(crate) perph: Peripherals,
     logger: Mutex<Logger>,
-    /// Detects if the controller is disconnected in the current runtime cycle
-    pub is_controller_disconnected: bool,
-    /// The current tick (cycle) within the robot's execution
-    pub tick: TickType,
 }
 
 impl Context {
@@ -20,8 +16,6 @@ impl Context {
         Self {
             perph,
             logger: Mutex::new(Logger::new()),
-            is_controller_disconnected: false,
-            tick: 0,
         }
     }
 
@@ -51,11 +45,5 @@ impl Context {
             });
             tick += i as u32;
         });
-    }
-
-    /// Gets the current state of the controller safely
-    #[inline]
-    pub fn controller(&mut self) -> Controller {
-        Controller::new(self)
     }
 }
