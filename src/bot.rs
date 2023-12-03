@@ -7,12 +7,12 @@ use crate::{context::Context, log::Log};
 pub const TICK_SPEED: u64 = 50;
 
 /// A safe translation layer to convert the user defined Bot into a vex competition Robot struct.
-pub struct Robot<T: for <'a> Bot<'a, TESTING> + Sync + Send + 'static, const TESTING: bool> {
+pub struct Robot<T: for <'a> Bot<'a> + Sync + Send + 'static> {
     custom: Mutex<T>,
     context: Mutex<Context>,
 }
 
-pub trait Bot<'a, const TESTING: bool> {
+pub trait Bot<'a> {
     /// Creates a new instance of a bot
     fn new(context: &'a Context) -> Self;
     /// Run each tick (runtime cycle) of `opcontrol`
@@ -23,6 +23,7 @@ pub trait Bot<'a, const TESTING: bool> {
     fn autonomous(&'a self, context: &'a Mutex<Context>) {}
 }
 
+#[cfg(not(feature = "simulate"))]
 macro_rules! vex_map {
     ($name:ident, $log:ident) => {
         #[inline]
@@ -45,7 +46,8 @@ macro_rules! vex_map {
     }
 }
 
-impl<T: for <'a> Bot<'a, false> + Sync + Send + 'static> robot::Robot for Robot<T, false> {
+#[cfg(not(feature = "simulate"))]
+impl<T: for <'a> Bot<'a> + Sync + Send + 'static> robot::Robot for Robot<T> {
     #[inline]
     fn new(peripherals: Peripherals) -> Self {
         let context = Context::new(peripherals);
@@ -59,7 +61,7 @@ impl<T: for <'a> Bot<'a, false> + Sync + Send + 'static> robot::Robot for Robot<
     vex_map!(autonomous, Autonomous);
 
     #[inline]
-    fn disabled(&mut self, _ctx: vex_rt::prelude::Context) {
+    fn disabled<'a>(&mut self, _ctx: vex_rt::prelude::Context) {
         self.context.lock().log(Log::Disabled);
     }
 
@@ -67,7 +69,8 @@ impl<T: for <'a> Bot<'a, false> + Sync + Send + 'static> robot::Robot for Robot<
     fn initialize(&mut self, _ctx: vex_rt::prelude::Context) {}
 }
 
-impl<T: for <'a> Bot<'a, true> + Sync + Send + 'static> robot::Robot for Robot<T, true> {
+#[cfg(feature = "simulate")]
+impl<T: for <'a> Bot<'a> + Sync + Send + 'static> robot::Robot for Robot<T> {
     #[inline]
     fn new(peripherals: Peripherals) -> Self {
         let context = Context::new(peripherals);
