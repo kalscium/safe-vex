@@ -17,10 +17,10 @@ pub trait Bot<'a> {
     fn new(context: &'a Context) -> Self;
     /// Run each tick (runtime cycle) of `opcontrol`
     #[allow(unused_variables)]
-    fn opcontrol(&'a self, context: &'a Context) {}
+    fn opcontrol(&'a mut self, context: &'a Context) {}
     /// Run each tick (runtime cycle) of `autonomous`
     #[allow(unused_variables)]
-    fn autonomous(&'a self, context: &'a Context) {}
+    fn autonomous(&'a mut self, context: &'a Context) {}
 }
 
 #[cfg(not(feature = "simulate"))]
@@ -75,7 +75,7 @@ impl<T: for <'a> Bot<'a> + Sync + Send + 'static> robot::Robot for Robot<T> {
         let context = Context::new(peripherals);
         Self {
             custom: Mutex::new(T::new(&context)),
-            context: Mutex::new(context),
+            context: context,
         }
     }
 
