@@ -11,6 +11,7 @@ pub enum Log {
     MotorDisconnect(u8),
     ControllerDisconnect,
     ControllerConnect,
+    RobotLockFailure,
     Autonomous,
     OpControl,
     Disabled,

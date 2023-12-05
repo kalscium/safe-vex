@@ -32,7 +32,9 @@ macro_rules! vex_map {
             let mut l = Loop::new(Duration::from_millis(TICK_SPEED));
             loop {
                 self.context.log($crate::log::Log::Nothing);
-                self.custom.lock().$name(&self.context);
+                if let Some(mut custom) = self.custom.poll() {
+                    custom.$name(&self.context);
+                } else { self.context.log($crate::log::Log::RobotLockFailure) }
 
                 select! {
                     _ = context.done() => break,
@@ -97,9 +99,13 @@ impl<T: for <'a> Bot<'a> + Sync + Send + 'static> robot::Robot for Robot<T> {
             }
 
             if opcontrol {
-                self.custom.lock().opcontrol(&self.context);
+                if let Some(custom) = self.custom.poll() {
+                    custom.opcontrol(&self.context);
+                } else { self.context.log(Log::RobotLockFailure) }
             } else {
-                self.custom.lock().autonomous(&self.context);
+                if let Some(custom) = self.custom.poll() {
+                    custom.autonomous(&self.context);
+                } else { self.context.log(Log::RobotLockFailure) }
             }
 
             select! {
