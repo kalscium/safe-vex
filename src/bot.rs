@@ -77,7 +77,7 @@ impl<T: for <'a> Bot<'a> + Sync + Send + 'static> robot::Robot for Robot<T> {
         let context = Context::new(peripherals);
         Self {
             custom: Mutex::new(T::new(&context)),
-            context: context,
+            context,
         }
     }
 
@@ -99,11 +99,11 @@ impl<T: for <'a> Bot<'a> + Sync + Send + 'static> robot::Robot for Robot<T> {
             }
 
             if opcontrol {
-                if let Some(custom) = self.custom.poll() {
+                if let Some(mut custom) = self.custom.poll() {
                     custom.opcontrol(&self.context);
                 } else { self.context.log(Log::RobotLockFailure) }
             } else {
-                if let Some(custom) = self.custom.poll() {
+                if let Some(mut custom) = self.custom.poll() {
                     custom.autonomous(&self.context);
                 } else { self.context.log(Log::RobotLockFailure) }
             }
