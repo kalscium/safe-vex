@@ -26,8 +26,14 @@ git clone https://github.com/GreenChild04/safe-vex-template.git
 ```
 2. Enter the newly cloned directory
 3. Turn on and connect to the vex v5 brain
-4. Run `sudo chmod a+rw /dev/ttyACM0 || sudo chmod a+rw /dev/ttyACM1` to give permission to upload code to the robot (doesn't matter if this fails)
-5. Run `cargo run --release` while connected to the v5 brain
+4. Give permission to upload code to the robot with: (doesn't matter if this fails)
+```sh
+sudo chmod a+rw /dev/ttyACM0 || sudo chmod a+rw /dev/ttyACM1
+```
+5. While connected to the v5 brain run:
+```sh
+cargo run --release
+```
 6. Your robot should now be up and running :D
 
 ## Quickstart *(with `Docker`)*
@@ -40,9 +46,18 @@ then:
 git clone https://github.com/GreenChild04/safe-vex-template.git
 ```
 2. Enter the newly cloned directory
-3. Run `docker build -t safe-vex-template .` to build the docker image
+3. Build the docker image with:
+```sh
+docker build -t safe-vex-template
+```
 4. Turn on and connect to the vex v5 brain
-5. Run `sudo chmod a+rw /dev/ttyACM0 || sudo chmod a+rw /dev/ttyACM1` to give permission to upload code to the robot (doesn't matter if this fails)
-6. Run `docker run -it --rm --device=/dev/$(ls /dev/ttyACM*) -v .:/project -v $HOME/.cargo/registry:/home/dev/.cargo/registry safe-vex-template` to run the docker container interactively
+5. Give permission to upload code to the robot with: (doesn't matter if this fails)
+```sh
+sudo chmod a+rw /dev/ttyACM0 || sudo chmod a+rw /dev/ttyACM1
+```
+6. Run the docker container interactively with:
+```sh
+docker run -it --rm --device=/dev/$(ls /dev/ttyACM*) -v .:/project -v $HOME/.cargo/registry:/home/dev/.cargo/registry safe-vex-template
+```
 7. Run `cargo run --release` in the docker container while connected to the v5 brain
 8. Your robot should now be up and running :D
