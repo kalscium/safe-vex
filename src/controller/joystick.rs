@@ -1,11 +1,12 @@
-/// A Representation of the current state of a controller joystick
+/// Represents a state of the controller
+#[derive(Debug, Clone)]
 pub struct JoyStick {
     pub x: i8,
     pub y: i8,
 }
 
 impl JoyStick {
-    /// Clamps/steps the joystick so it has to have a minimum amount of activation before being picked up (to avoid stick-drift).
+    /// Clamps the joystick so it has to be a minimum amount of activation before being registered (to avoid stick-drift)
     #[inline]
     pub fn clamp(mut self, min: u8) -> Self {
         if self.x.unsigned_abs() < min { self.x = 0 }
