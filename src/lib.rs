@@ -12,3 +12,7 @@ pub mod controller;
 pub mod port;
 pub mod bot;
 pub mod macros;
+pub mod prelude;
+
+// re-exports
+pub use vex_rt::motor;
