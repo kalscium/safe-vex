@@ -7,13 +7,13 @@ pub struct Maybe<T> {
     /// internal option
     value: Option<T>,
     /// a function that tries to build / create the value
-    build: Box<dyn Fn() -> Option<T>>,
+    build: Box<dyn Fn() -> Option<T> + Sync + Send>,
 }
 
 impl<T> Maybe<T> {
     /// Creates a new optional version of `T`
     #[inline]
-    pub fn new(f: Box<dyn Fn() -> Option<T>>) -> Self {
+    pub fn new(f: Box<dyn Fn() -> Option<T> + Sync + Send>) -> Self {
         Self {
             value: f(),
             build: f,
