@@ -1,3 +1,7 @@
+[![crates.io](https://img.shields.io/crates/v/cargo-rdme.svg)](https://crates.io/crates/safe-vex)
+[![Downloads crates.io](https://img.shields.io/crates/d/safe-vex.svg?label=crates.io%20downloads)](https://crates.io/crates/safe-vex)
+[![License](https://img.shields.io/crates/l/safe-vex.svg)](./LICENSE.md)
+
 # safe-vex
 A safe, reliable and comprehensive wrapper around the vex-rt library that will never panic!
 
