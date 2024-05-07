@@ -13,6 +13,7 @@ pub mod port;
 pub mod bot;
 pub mod macros;
 pub mod prelude;
+pub mod maybe;
 
 // re-exports
 pub use vex_rt::motor;
