@@ -30,9 +30,9 @@ impl PortManager {
 
     /// Gets a non-mutable reference to a smart port of the robot
     #[inline]
-    pub fn get(&self, idx: u8) -> Result<&SmartPort, PortError> {
+    pub fn get(&self, port: u8) -> Result<&SmartPort, PortError> {
         self.0
-            .get(idx as usize)
+            .get(port as usize)
             .ok_or(PortError::PortInvalid)?
             .as_ref()
             .ok_or(PortError::PortTaken)
@@ -40,9 +40,9 @@ impl PortManager {
 
     /// Gets a mutable reference to a smart port of the robot
     #[inline]
-    pub fn get_mut(&mut self, idx: u8) -> Result<&mut SmartPort, PortError> {
+    pub fn get_mut(&mut self, port: u8) -> Result<&mut SmartPort, PortError> {
         self.0
-            .get_mut(idx as usize)
+            .get_mut(port as usize)
             .ok_or(PortError::PortInvalid)?
             .as_mut()
             .ok_or(PortError::PortTaken)
@@ -50,9 +50,9 @@ impl PortManager {
 
     /// Takes ownership of a smart port of the robot
     #[inline]
-    pub fn take(&mut self, idx: u8) -> Result<SmartPort, PortError> {
+    pub fn take(&mut self, port: u8) -> Result<SmartPort, PortError> {
         self.0
-            .get_mut(idx as usize)
+            .get_mut(port as usize)
             .ok_or(PortError::PortInvalid)?
             .take()
             .ok_or(PortError::PortTaken)
