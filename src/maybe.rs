@@ -30,4 +30,10 @@ impl<T> Maybe<T> {
         self.value = (self.build)();
         self.value.as_mut()
     }
+
+    /// Tries to get the internal value; does nothing if it fails
+    #[inline]
+    pub fn get_ref(&self) -> Option<&T> {
+        self.value.as_ref()
+    }
 }
