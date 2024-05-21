@@ -8,7 +8,7 @@ pub struct Robot<UserBot: Bot> {
     /// The user defined robot code
     custom: Mutex<UserBot>,
     /// Manages the ports of the robot for safety
-    port_manager: PortManager,
+    port_manager: Mutex<PortManager>,
     /// The peripherals of the robot
     peripherals: Peripherals,
 }
@@ -42,11 +42,11 @@ macro_rules! cycled {
             let mut tick = 0;
 
             loop {
-                if let Some(mut user_defined) = self.custom.poll() {
+                if let (Some(ref mut user_defined), Some(ref mut port_manager)) = (self.custom.poll(), self.port_manager.poll()) {
                     if user_defined.$name(Context::new(
                         tick,
                         &self.peripherals,
-                        &mut self.port_manager,
+                        port_manager,
                     )) { break };
                 } else { break }
 
@@ -69,7 +69,7 @@ impl<UserBot: Bot> robot::Robot for Robot<UserBot> {
         
         Self {
             custom: Mutex::new(Bot::new(&peripherals, &mut port_manager)),
-            port_manager,
+            port_manager: Mutex::new(port_manager),
             peripherals,
         }
     }
