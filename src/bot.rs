@@ -42,20 +42,19 @@ macro_rules! cycled {
             let mut tick = 0;
 
             loop {
+                tick += 1;
+
                 if let (Some(ref mut user_defined), Some(ref mut port_manager)) = (self.custom.poll(), self.port_manager.poll()) {
                     if user_defined.$name(Context::new(
                         tick,
                         &self.peripherals,
                         port_manager,
                     )) { break };
-                } else { break }
+                } else { continue }
 
                 select! {
-                    _ = context.done() => break,
-                    _ = l.select() => {
-                        tick += 1;
-                        continue;
-                    },
+                    _ = context.done() => continue,
+                    _ = l.select() => continue,
                 }
             }
         }
