@@ -1,14 +1,14 @@
 use core::time::Duration;
 
-use vex_rt::{peripherals::Peripherals, robot, rtos::{Loop, Mutex}, select};
+use vex_rt::{peripherals::Peripherals, robot, rtos::Loop, select};
 use crate::{context::Context, port::PortManager};
 
 /// A safe translation layer to convert a user defiend Bot into a vex competition Robot struct
 pub struct Robot<UserBot: Bot> {
     /// The user defined robot code
-    custom: Mutex<UserBot>,
+    custom: UserBot,
     /// Manages the ports of the robot for safety
-    port_manager: Mutex<PortManager>,
+    port_manager: PortManager,
     /// The peripherals of the robot
     peripherals: Peripherals,
 }
@@ -33,8 +33,7 @@ pub trait Bot: Sync + Send + 'static{
     #[allow(unused_variables)]
     fn disabled(&mut self, context: Context) -> bool { true }
 }
-
-macro_rules! cycled {
+ macro_rules! cycled {
     ($name:ident, $bot:ty) => {
         #[inline]
         fn $name(&mut self, context: vex_rt::prelude::Context) {
@@ -44,13 +43,11 @@ macro_rules! cycled {
             loop {
                 tick += 1;
 
-                if let (Some(ref mut user_defined), Some(ref mut port_manager)) = (self.custom.poll(), self.port_manager.poll()) {
-                    if user_defined.$name(Context::new(
-                        tick,
-                        &self.peripherals,
-                        port_manager,
-                    )) { break };
-                } else { continue }
+                if self.custom.$name(Context::new(
+                    tick,
+                    &self.peripherals,
+                    &mut self.port_manager,
+                )) { break };
 
                 select! {
                     _ = context.done() => continue,
@@ -67,8 +64,8 @@ impl<UserBot: Bot> robot::Robot for Robot<UserBot> {
         let mut port_manager = PortManager::new();
         
         Self {
-            custom: Mutex::new(Bot::new(&peripherals, &mut port_manager)),
-            port_manager: Mutex::new(port_manager),
+            custom: Bot::new(&peripherals, &mut port_manager),
+            port_manager: port_manager,
             peripherals,
         }
     }
