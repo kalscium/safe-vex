@@ -47,7 +47,7 @@ pub trait Bot: Sync + Send + 'static{
                     tick,
                     &self.peripherals,
                     &mut self.port_manager,
-                )) { break };
+                )) { return };
 
                 select! {
                     _ = context.done() => continue,
@@ -65,7 +65,7 @@ impl<UserBot: Bot> robot::Robot for Robot<UserBot> {
         
         Self {
             custom: Bot::new(&peripherals, &mut port_manager),
-            port_manager: port_manager,
+            port_manager,
             peripherals,
         }
     }
