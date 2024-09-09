@@ -45,7 +45,7 @@ pub trait Bot: Sync + Send + 'static{
 
                 if self.custom.$name(Context::new(
                     tick,
-                    &self.peripherals,
+                    &mut self.peripherals,
                     &mut self.port_manager,
                 )) { return };
 
