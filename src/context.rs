@@ -8,14 +8,14 @@ pub struct Context<'a> {
     /// The current tick of the robot
     pub tick: u16,
     /// A reference to the peripherals of the robot
-    pub peripherals: &'a Peripherals,
+    pub peripherals: &'a mut Peripherals,
     /// A mutable reference to the robot's `PortManager`
     pub port_manager: &'a mut PortManager,
 }
 
 impl<'a> Context<'a> {
     #[inline]
-    pub(crate) fn new(tick: u16, peripherals: &'a Peripherals, port_manager: &'a mut PortManager) -> Self {
+    pub(crate) fn new(tick: u16, peripherals: &'a mut Peripherals, port_manager: &'a mut PortManager) -> Self {
         Self {
             controller: Controller::new(peripherals),
             tick,
