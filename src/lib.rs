@@ -5,7 +5,7 @@
 #![feature(negative_impls)]
 #![warn(missing_docs)]
 
-mod bindings;
+pub mod bindings;
 
 pub mod error;
 pub mod port;
