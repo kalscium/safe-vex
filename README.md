@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/crates/l/safe-vex.svg)](./LICENSE.md)
 
 # safe-vex
-A safe, reliable and comprehensive wrapper around the vex-rt library that will never panic!
+A modular, safe and data-orientated rust wrapper over the Purdue PROS library for vex
 
 ## Disclamer
 `safe-vex` is an open-source community project. `safe-vex` is neither endorsed by or affiliated with Innovation First, Inc. VEX and VEX Robotics are trademarks or service marks of Innovation First, Inc. `safe-vex` is also not developed by the same developers at [vex-rt](https://crates.io/crates/vex-rt) rather it is an independant project.
