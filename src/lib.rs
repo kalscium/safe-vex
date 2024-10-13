@@ -7,6 +7,7 @@
 
 pub mod bindings;
 
+pub mod entry;
 pub mod error;
 pub mod port;
 pub mod motor;

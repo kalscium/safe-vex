@@ -46,6 +46,9 @@
             cargo-watch
             rust-analyzer
 
+            # bacon
+            bacon
+
             # GCC compiler for vex v5 robot brain
             gcc-arm-embedded-13
           ];
