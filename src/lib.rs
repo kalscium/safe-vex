@@ -7,7 +7,24 @@
 
 pub mod bindings;
 
+extern crate alloc;
+
+pub mod allocator;
 pub mod entry;
+pub mod io;
 pub mod error;
 pub mod port;
 pub mod motor;
+
+/// Handles the program's panics
+#[panic_handler]
+fn panic_handler(info: &core::panic::PanicInfo) -> ! {
+    crate::io::eprintln!(
+        "panic occurred!: {:#?}",
+        info,
+    );
+
+    unsafe {
+        libc::exit(1)
+    }
+}

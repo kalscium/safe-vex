@@ -18,6 +18,8 @@ path = "src/lib.rs"
 [dependencies]
 libc = { version = "0.2.159", default-features = false }
 libc-print = "0.1.23"
+rcstring = "0.2.1"
+newlib-alloc = "0.1.0"
 
 [build-dependencies]
 zip = "2.2.0"
