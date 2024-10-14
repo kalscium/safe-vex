@@ -65,3 +65,50 @@ docker run -it --rm --device=/dev/$(ls /dev/ttyACM*) -v .:/project -v $HOME/.car
 ```
 7. Run `cargo run --release` in the docker container while connected to the v5 brain
 8. Your robot should now be up and running :D
+
+# Updating the PROS Library Version
+---
+> *(For future reference for the maintainence of this library)*
+To update the pros library version used by `safe-vex`, follow the following steps (with the correct toolchains installed)
+1. Enter the `build` directory of the library
+## *While inside the `build` dir*
+2. Create an empty pros project
+  ```sh
+    pros conductor new kernel
+  ```
+3. Delete the unnecessary bloat libraries and files that are irrelevant to `PROS`
+  ```sh
+    rm -rf kernel/bin kernel/firmware/{okapilib.a,squiggles.mk} kernel/okapi
+  ```
+4. Rename the `project.pros` file to `template.pros` and take note of the version
+  ```sh
+    mv kernel/project.pros kernel/template.pros
+  ```
+  ```json
+    {
+      "py/state": {
+        "templates": {
+          "kernel": {
+            "target": "v5",
+            "version": "<version>, eg 1.0.0 (TAKE NOTE OF THIS FOR LATER STEPS)",
+          }
+        }
+      }
+    }
+  ```
+5. Zip and package the kernel for compilation use
+  ```sh
+    (cd kernel && zip ../kernel@VERSION.zip -r *)
+    rm -rf kernel
+  ```
+6. Update references to the kernel package in bindgen build code (*still in the build dir* `main.rs`)
+  ```rust
+    // Path to PROS release zip (relative to project root)
+    const PROS_ZIP_STR: &str = "build/kernel@VERSION.zip"; // update the vesrion
+  ```
+## *In the project root*
+7. Clean the project and publish it *(given you have changed the project version in `Cargo.toml` to something appropriate to this update to the kernel)*
+  ```sh
+    cargo clean
+    cargo publish
+  ```
