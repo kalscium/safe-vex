@@ -4,7 +4,7 @@
 #[macro_export]
 macro_rules! entry {
     // user-facing
-    ($($entry:ident: $user:ident;)*) => {
+    ($($entry:ident: $user:tt,)*) => {
         $(
             entry!(@internal $entry $user);
         )*
@@ -13,7 +13,8 @@ macro_rules! entry {
     // internal
 
     // initialisation function
-    (@internal initialize $user:ident) => {
+    (@internal initialize $user:tt) => {
+        #[inline]
         #[no_mangle]
         unsafe extern "C" fn initialize() {
             $user();
@@ -21,7 +22,8 @@ macro_rules! entry {
     };
 
     // opcontrol function
-    (@internal opcontrol $user:ident) => {
+    (@internal opcontrol $user:tt) => {
+        #[inline]
         #[no_mangle]
         unsafe extern "C" fn opcontrol() {
             $user();
@@ -29,7 +31,8 @@ macro_rules! entry {
     };
 
     // autonomous function
-    (@internal autonomous $user:ident) => {
+    (@internal autonomous $user:tt) => {
+        #[inline]
         #[no_mangle]
         unsafe extern "C" fn autonomous() {
             $user();
@@ -37,10 +40,16 @@ macro_rules! entry {
     };
 
     // disabled function
-    (@internal disabled $user:ident) => {
+    (@internal disabled $user:tt) => {
+        #[inline]
         #[no_mangle]
         unsafe extern "C" fn disabled() {
             $user();
         }
+    };
+
+    // if nothing matches
+    (@internal $invalid:ident $user:tt) => {
+        compile_error!(concat!("entry macro error: entrypoint `", stringify!($invalid), "` does not exist"));
     };
 }
