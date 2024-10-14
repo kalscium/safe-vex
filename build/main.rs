@@ -8,7 +8,7 @@ use std::{
 use zip_extensions::zip_extract;
 
 // Path to PROS release zip (relative to project root)
-const PROS_ZIP_STR: &str = "build/kernel@3.7.2.zip";
+const PROS_ZIP_STR: &str = "build/kernel@4.1.0.zip";
 
 // Path to PROS wrapper.h (relative to project root)
 const PROS_WRAPPER_STR: &str = "build/wrapper.h";
@@ -56,6 +56,24 @@ const WHITELISTED_FUNCS: &[&str] = &[
     "ext_adi_ultrasonic_get",
     "ext_adi_ultrasonic_init",
     "ext_adi_ultrasonic_shutdown",
+    "adi_analog_calibrate",
+    "adi_analog_read",
+    "adi_analog_read_calibrated",
+    "adi_analog_read_calibrated_HR",
+    "adi_digital_read",
+    "adi_digital_write",
+    "adi_encoder_get",
+    "adi_encoder_init",
+    "adi_encoder_reset",
+    "adi_encoder_shutdown",
+    "adi_gyro_init",
+    "adi_gyro_get",
+    "adi_gyro_reset",
+    "adi_gyro_shutdown",
+    "adi_port_set_config",
+    "adi_ultrasonic_get",
+    "adi_ultrasonic_init",
+    "adi_ultrasonic_shutdown",
     "imu_reset",
     "imu_get_rotation",
     "imu_get_heading",
