@@ -4,9 +4,9 @@
 #[macro_export]
 macro_rules! entry {
     // user-facing
-    ($($entry:ident: $user:tt,)*) => {
+    ($($entry:ident: $user:tt;)*) => {
         $(
-            entry!(@internal $entry $user);
+            $crate::entry!(@internal $entry $user);
         )*
     };
 
