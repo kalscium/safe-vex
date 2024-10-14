@@ -27,3 +27,18 @@ pub enum SmartPort {
     Twenty = 20,
     TwentyOne = 21,
 }
+
+/// An ADI port on the brain
+#[allow(missing_docs)]
+#[derive(Debug, Clone, Copy)]
+#[repr(u8)]
+pub enum AdiPort {
+    A = 1,
+    B = 2,
+    C = 3,
+    D = 4,
+    E = 5,
+    F = 6,
+    G = 7,
+    H = 8,
+}
