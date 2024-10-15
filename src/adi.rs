@@ -68,8 +68,10 @@ pub unsafe fn digital_read(port: AdiPort) -> Result<bool, PROSErr> {
     };
 
     // check for errors
-    let err = PROSErr::parse(code);
+    if let Some(err) = PROSErr::parse(code) {
+        return Err(err);
+    }
 
-    // return error if there is one, or return the digital output
-    err.map_or_else(|| Ok(code != 0), Err)
+    // return the digital output
+    Ok(code != 0)
 }

@@ -6,6 +6,8 @@
 pub enum PROSErr {
     /// No such device or address
     NXIO = 6,
+    /// Permission denied
+    Access = 13,
     /// No such device
     NoDev = 19,
     /// Address already in use or not configured correctly
@@ -17,6 +19,7 @@ impl PROSErr {
     pub fn parse(err: i32) -> Option<Self> {
         Some(match err {
             6 => Self::NXIO,
+            13 => Self::Access,
             19 => Self::NoDev,
             112 => Self::AddrInUse,
 

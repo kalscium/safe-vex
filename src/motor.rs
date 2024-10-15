@@ -9,11 +9,18 @@ use crate::{bindings, error::PROSErr, port::SmartPort};
 /// - Returns `PROSErr::NXIO` if the motor port is invalid (*shouldn't* be possible)
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a motor
 pub fn get_voltage(port: SmartPort, reversed: bool) -> Result<i32, PROSErr> {
-    let code = unsafe { // get the return code
+    // get the voltage of the motor
+    let code = unsafe {
         bindings::motor_get_voltage(port as i8 * if reversed { -1 } else { 1 })
     };
-    let err = PROSErr::parse(code); // parse for an error *(if there is one)*
-    err.map_or(Ok(code), Err) // return error if there is one, otherwise the return code
+
+    // check for errors
+    if let Some(err) = PROSErr::parse(code) {
+        return Err(err);
+    }
+    
+    // return voltage
+    Ok(code)
 }
 
 /// Sets the voltage linearly for a motor from `-127` to `127`
