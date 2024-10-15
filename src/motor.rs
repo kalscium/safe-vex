@@ -6,7 +6,6 @@ use crate::{bindings, error::PROSErr, port::SmartPort};
 ///
 /// # Errors
 ///
-/// - Returns `PROSErr::NXIO` if the motor port is invalid (*shouldn't* be possible)
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a motor
 pub fn get_voltage(port: SmartPort, reversed: bool) -> Result<i32, PROSErr> {
     // get the voltage of the motor
@@ -27,7 +26,6 @@ pub fn get_voltage(port: SmartPort, reversed: bool) -> Result<i32, PROSErr> {
 ///
 /// # Errors
 ///
-/// - Returns `PROSErr::NXIO` if the motor port is invalid (*shouldn't* be possible)
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a motor
 pub fn move_i8(port: SmartPort, reversed: bool, val: i8) -> Option<PROSErr> {
     PROSErr::parse(unsafe {
@@ -39,7 +37,6 @@ pub fn move_i8(port: SmartPort, reversed: bool, val: i8) -> Option<PROSErr> {
 ///
 /// # Errors
 ///
-/// - Returns `PROSErr::NXIO` if the motor port is invalid (*shouldn't* be possible)
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a motor
 pub fn move_voltage(port: SmartPort, reversed: bool, val: i8) -> Option<PROSErr> {
     PROSErr::parse(unsafe {
