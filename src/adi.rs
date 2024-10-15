@@ -16,15 +16,12 @@ pub enum AdiConfig {
     DigitalOut = 3,
 }
 
-/// Sets the configurations for an Adi port, returns an error if there is one
-pub fn set_config(port: AdiPort, config: AdiConfig) -> Option<PROSErr> {
+/// Sets the configurations for a specified ADI port
+pub fn set_config(port: AdiPort, config: AdiConfig)  {
     // set the config for the adi port
-    let code = unsafe {
-        bindings::adi_port_set_config(port as u8, config as u32)
-    };
-
-    // return the parsed return code
-    PROSErr::parse(code)
+    unsafe {
+        bindings::adi_port_set_config(port as u8, config as u32);
+    }
 }
 
 /// **Warning:** ADI port must be configured prior to this function call
@@ -33,7 +30,6 @@ pub fn set_config(port: AdiPort, config: AdiConfig) -> Option<PROSErr> {
 ///
 /// # Errors
 /// 
-/// - Returns `PROSErr::NXIO` if the ADI port is not valid (*shouldn't* be possible)
 /// - Returns `PROSErr::AddrInUse` if the ADI port is not configured correctly
 ///
 /// # Safety
@@ -55,7 +51,6 @@ pub unsafe fn digital_write(port: AdiPort, val: bool) -> Option<PROSErr> {
 ///
 /// # Errors
 /// 
-/// - Returns `PROSErr::NXIO` if the ADI port is not valid (*shouldn't* be possible)
 /// - Returns `PROSErr::AddrInUse` if the ADI port is not configured correctly
 ///
 /// # Safety

@@ -11,6 +11,7 @@ extern crate alloc;
 
 pub mod allocator;
 pub mod entry;
+pub mod rtos;
 pub mod io;
 pub mod error;
 pub mod port;
