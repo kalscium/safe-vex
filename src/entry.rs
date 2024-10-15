@@ -4,52 +4,52 @@
 #[macro_export]
 macro_rules! entry {
     // user-facing
-    ($($entry:ident: $user:tt;)*) => {
+    ($($entry:ident => $body:stmt;)*) => {
         $(
-            $crate::entry!(@internal $entry $user);
+            $crate::entry!(@internal $entry $body);
         )*
     };
 
     // internal
 
     // initialisation function
-    (@internal initialize $user:tt) => {
+    (@internal initialize $body:stmt) => {
         #[inline]
         #[no_mangle]
         unsafe extern "C" fn initialize() {
-            $user();
+            $body
         }
     };
 
     // opcontrol function
-    (@internal opcontrol $user:tt) => {
+    (@internal opcontrol $body:stmt) => {
         #[inline]
         #[no_mangle]
         unsafe extern "C" fn opcontrol() {
-            $user();
+            $body
         }
     };
 
     // autonomous function
-    (@internal autonomous $user:tt) => {
+    (@internal autonomous $body:stmt) => {
         #[inline]
         #[no_mangle]
         unsafe extern "C" fn autonomous() {
-            $user();
+            $body
         }
     };
 
     // disabled function
-    (@internal disabled $user:tt) => {
+    (@internal disabled $body:stmt) => {
         #[inline]
         #[no_mangle]
         unsafe extern "C" fn disabled() {
-            $user();
+            $body
         }
     };
 
     // if nothing matches
-    (@internal $invalid:ident $user:tt) => {
+    (@internal $invalid:ident $body:stmt) => {
         compile_error!(concat!("entry macro error: entrypoint `", stringify!($invalid), "` does not exist"));
     };
 }
