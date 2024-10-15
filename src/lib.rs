@@ -16,6 +16,7 @@ pub mod error;
 pub mod port;
 pub mod motor;
 pub mod adi;
+pub mod controller;
 
 /// Handles the program's panics
 #[panic_handler]
