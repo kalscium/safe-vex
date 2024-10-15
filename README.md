@@ -1,12 +1,8 @@
-[![crates.io](https://img.shields.io/crates/v/cargo-rdme.svg)](https://crates.io/crates/safe-vex)
-[![Downloads crates.io](https://img.shields.io/crates/d/safe-vex.svg?label=crates.io%20downloads)](https://crates.io/crates/safe-vex)
-[![License](https://img.shields.io/crates/l/safe-vex.svg)](./LICENSE.md)
-
 # safe-vex
 A modular, safe and data-orientated rust wrapper over the Purdue PROS library for Vex Robotics
 
 ## Disclamer
-`safe-vex` is an open-source community project. `safe-vex` is neither endorsed by or affiliated with Innovation First, Inc. VEX and VEX Robotics are trademarks or service marks of Innovation First, Inc. `safe-vex` is also not developed by the same developers at [vex-rt](https://crates.io/crates/vex-rt) rather it is an independant project.
+`safe-vex` is an open-source project by [kalscium](https://github.com/kalscium). `safe-vex` is neither endorsed by or affiliated with Innovation First, Inc. VEX and VEX Robotics are trademarks or service marks of Innovation First, Inc. `safe-vex` is also not developed by nor endorsed by the developers of the [Purdue PROS library](https://github.com/purduesigbots/pros).
 
 ## Quickstart *(Nix)*
 you will need:
