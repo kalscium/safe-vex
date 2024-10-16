@@ -14,7 +14,7 @@ pub fn get_voltage(port: SmartPort, reversed: bool) -> Result<i32, PROSErr> {
     };
 
     // check for errors
-    if let Some(err) = PROSErr::parse(code) {
+    if let Err(err) = PROSErr::parse(code) {
         return Err(err);
     }
     
@@ -27,7 +27,7 @@ pub fn get_voltage(port: SmartPort, reversed: bool) -> Result<i32, PROSErr> {
 /// # Errors
 ///
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a motor
-pub fn move_i8(port: SmartPort, reversed: bool, val: i8) -> Option<PROSErr> {
+pub fn move_i8(port: SmartPort, reversed: bool, val: i8) -> Result<(), PROSErr> {
     PROSErr::parse(unsafe {
         bindings::motor_move(port as i8 * if reversed { -1 } else { 1 }, val as i32)
     })
@@ -38,7 +38,7 @@ pub fn move_i8(port: SmartPort, reversed: bool, val: i8) -> Option<PROSErr> {
 /// # Errors
 ///
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a motor
-pub fn move_voltage(port: SmartPort, reversed: bool, val: i8) -> Option<PROSErr> {
+pub fn move_voltage(port: SmartPort, reversed: bool, val: i8) -> Result<(), PROSErr> {
     PROSErr::parse(unsafe {
         bindings::motor_move_voltage(port as i8 * if reversed { -1 } else { 1 }, val as i32)
     })

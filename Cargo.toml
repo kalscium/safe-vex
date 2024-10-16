@@ -1,6 +1,6 @@
 [package]
 name = "safe-vex"
-version = "4.1.0-alpha"
+version = "4.2.0-alpha"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "A modular, safe and data-orientated rust wrapper over the Purdue PROS library for Vex Robotics"

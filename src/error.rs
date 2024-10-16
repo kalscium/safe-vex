@@ -14,14 +14,14 @@ pub enum PROSErr {
 
 impl PROSErr {
     /// Parses and returns a `PROSErr` from an `i32` if the error is valid
-    pub fn parse(err: i32) -> Option<Self> {
-        Some(match err {
+    pub fn parse(err: i32) -> Result<(), Self> {
+        Err(match err {
             13 => Self::Access,
             19 => Self::NoDev,
             112 => Self::AddrInUse,
 
             // if none match
-            _ => return None,
+            _ => return Ok(()),
         })
     }
 }
