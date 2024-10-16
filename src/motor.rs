@@ -38,8 +38,8 @@ pub fn move_i8(port: SmartPort, reversed: bool, val: i8) -> Result<(), PROSErr> 
 /// # Errors
 ///
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a motor
-pub fn move_voltage(port: SmartPort, reversed: bool, val: i8) -> Result<(), PROSErr> {
+pub fn move_voltage(port: SmartPort, reversed: bool, val: i32) -> Result<(), PROSErr> {
     PROSErr::parse(unsafe {
-        bindings::motor_move_voltage(port as i8 * if reversed { -1 } else { 1 }, val as i32)
+        bindings::motor_move_voltage(port as i8 * if reversed { -1 } else { 1 }, val)
     })
 }
