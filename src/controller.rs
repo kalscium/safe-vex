@@ -56,52 +56,44 @@ pub enum ControllerDigital {
     A,
 }
 
-/// Returns the analog value of a controller, if the controller is connected
+/// Returns the analog value of a controller
 ///
 /// # Errors
 ///
 /// Returns `PROSErr::Access` if another resource is currently trying to access the controller
-pub fn get_analog(controller: Controller, analog: ControllerAnalog) -> Result<Option<i8>, PROSErr> {
+/// Returns `0` if the controller is not connected
+pub fn get_analog(controller: Controller, analog: ControllerAnalog) -> Result<i8, PROSErr> {
     // get the analog value of the controller joystick
     let code = unsafe {
         bindings::controller_get_analog(controller as u32, analog as u32)
     };
 
     // check for errors
-    if let Some(err) = PROSErr::parse(code) {
+    if let Err(err) = PROSErr::parse(code) {
         return Err(err);
     }
 
-    // make sure the controller is connected
-    if code == 0 {
-        return Ok(None);
-    }
-
     // return valid analog controller input
-    Ok(Some(code as i8))
+    Ok(code as i8)
 }
 
-/// Returns the digital value of a controller button, if the controller is connected
+/// Returns the digital value of a controller button
 ///
 /// # Errors
 ///
 /// Returns `PROSErr::Access` if another resource is currently trying to access the controller
-pub fn get_digital(controller: Controller, digital: ControllerDigital) -> Result<Option<bool>, PROSErr> {
+/// Returns `false` if the controller is not connected
+pub fn get_digital(controller: Controller, digital: ControllerDigital) -> Result<bool, PROSErr> {
     // get the analog value of the controller joystick
     let code = unsafe {
         bindings::controller_get_digital(controller as u32, digital as u32)
     };
 
     // check for errors
-    if let Some(err) = PROSErr::parse(code) {
+    if let Err(err) = PROSErr::parse(code) {
         return Err(err);
     }
 
-    // make sure the controller is connected
-    if code == 0 {
-        return Ok(None);
-    }
-
     // return valid analog controller input
-    Ok(Some(code == 1))
+    Ok(code != 0)
 }
