@@ -4,6 +4,8 @@
 #[derive(Debug, Clone, Copy)]
 #[repr(i32)]
 pub enum PROSErr {
+    /// No more processes
+    Again = 11,
     /// Permission denied
     Access = 13,
     /// No such device
@@ -16,6 +18,7 @@ impl PROSErr {
     /// Parses and returns a `PROSErr` from an `i32` if the error is valid
     pub fn parse(err: i32) -> Result<(), Self> {
         Err(match err {
+            11 => Self::Again,
             13 => Self::Access,
             19 => Self::NoDev,
             112 => Self::AddrInUse,
