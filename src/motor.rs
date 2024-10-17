@@ -9,17 +9,15 @@ use crate::{bindings, error::PROSErr, port::SmartPort};
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a motor
 pub fn get_voltage(port: SmartPort, reversed: bool) -> Result<i32, PROSErr> {
     // get the voltage of the motor
-    let code = unsafe {
+    let voltage = unsafe {
         bindings::motor_get_voltage(port as i8 * if reversed { -1 } else { 1 })
     };
 
     // check for errors
-    if let Err(err) = PROSErr::parse(code) {
-        return Err(err);
-    }
+    PROSErr::parse(voltage)?;
     
     // return voltage
-    Ok(code)
+    Ok(voltage)
 }
 
 /// Sets the voltage linearly for a motor from `-127` to `127`

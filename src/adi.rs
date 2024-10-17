@@ -36,13 +36,10 @@ pub fn set_config(port: AdiPort, config: AdiConfig)  {
 ///
 /// This function is marked unsafe due to it depending on the Adi port having previously being configured as the kind of Adi port that is expected by this function
 pub unsafe fn digital_write(port: AdiPort, val: bool) -> Result<(), PROSErr> {
-    // write the digital value to the adi port
-    let code = unsafe {
+    // write to the digital ADI output and wrap any errors
+    PROSErr::parse(unsafe {
         bindings::adi_digital_write(port as u8, val)
-    };
-
-    // return the parsed return code
-    PROSErr::parse(code)
+    })
 }
 
 /// **Warning:** ADI port must be configured prior to this function call
@@ -63,9 +60,7 @@ pub unsafe fn digital_read(port: AdiPort) -> Result<bool, PROSErr> {
     };
 
     // check for errors
-    if let Err(err) = PROSErr::parse(code) {
-        return Err(err);
-    }
+    PROSErr::parse(code)?; 
 
     // return the digital output
     Ok(code != 0)
