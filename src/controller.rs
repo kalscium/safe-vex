@@ -1,5 +1,7 @@
 //! # Controller API
 
+use alloc::ffi::CString;
+
 use crate::{bindings, error::PROSErr};
 
 /// A controller that you can read from
@@ -96,4 +98,19 @@ pub fn get_digital(controller: Controller, digital: ControllerDigital) -> Result
 
     // return valid analog controller input
     Ok(code != 0)
+}
+
+/// Rumbles the controller
+///
+/// The rumble pattern is a string consisting of the characters '.', '-', and ' ', where dots are short rumbles, dashes are long rumbles, and spaces are pauses. Maximum supported length is 8 characters
+///
+/// # Errors
+///
+/// Returns `PROSErr::Access` if another resource is currently trying to access the controller
+pub fn rumble(controller: Controller, rumble_pattern: &str) -> Result<(), PROSErr> {
+    // rumble the controller
+    PROSErr::parse(unsafe {
+        let rumble_pattern = CString::new(rumble_pattern).unwrap();
+        bindings::controller_rumble(controller as u32, rumble_pattern.as_ptr() as *const u8)
+    })
 }
