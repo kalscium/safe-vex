@@ -18,7 +18,7 @@ pub fn reset(port: SmartPort) -> Result<(), PROSErr> {
 
 /// Gets the Inertial Sensor's heading relative to the initial direction of it's x-axis
 ///
-/// This value is bounded by `0..=360`. Clockwise rotations are represented with positive degree values, while counterclockwise rotations are represented with negative ones
+/// This value is bounded by `0..=360`///
 ///
 /// # Errors
 ///
@@ -28,6 +28,69 @@ pub fn get_heading(port: SmartPort) -> Result<f64, PROSErr> {
     // get the heading of the sensor
     let heading = unsafe {
         bindings::imu_get_heading(port as u8)
+    };
+
+    // check for errors
+    PROSErr::parse(heading as i32)?;
+
+    // return heading
+    Ok(heading)
+}
+
+/// Gets the Inertial Sensor's heading relative to the initial direction of it's x-axis
+///
+/// This value is bounded by `-180..=180`. Clockwise rotations are represented with positive degree values, while counterclockwise rotations are represented with negative ones
+///
+/// # Errors
+///
+/// - Returns `PROSErr::NoDev` if the port cannot be configured as a Inertial Sensor
+/// - Returns `PROSErr::Again` if the sensor is still calibrating
+pub fn get_yaw(port: SmartPort) -> Result<f64, PROSErr> {
+    // get the heading of the sensor
+    let heading = unsafe {
+        bindings::imu_get_yaw(port as u8)
+    };
+
+    // check for errors
+    PROSErr::parse(heading as i32)?;
+
+    // return heading
+    Ok(heading)
+}
+
+/// Gets the Inertial Sensor's heading relative to the initial direction of it's x-axis
+///
+/// This value is bounded by `-180..=180`. Clockwise rotations are represented with positive degree values, while counterclockwise rotations are represented with negative ones
+///
+/// # Errors
+///
+/// - Returns `PROSErr::NoDev` if the port cannot be configured as a Inertial Sensor
+/// - Returns `PROSErr::Again` if the sensor is still calibrating
+pub fn get_pitch(port: SmartPort) -> Result<f64, PROSErr> {
+    // get the heading of the sensor
+    let heading = unsafe {
+        bindings::imu_get_pitch(port as u8)
+    };
+
+    // check for errors
+    PROSErr::parse(heading as i32)?;
+
+    // return heading
+    Ok(heading)
+}
+
+/// Gets the Inertial Sensor's heading relative to the initial direction of it's x-axis
+///
+/// This value is bounded by `-180..=180`. Clockwise rotations are represented with positive degree values, while counterclockwise rotations are represented with negative ones
+///
+/// # Errors
+///
+/// - Returns `PROSErr::NoDev` if the port cannot be configured as a Inertial Sensor
+/// - Returns `PROSErr::Again` if the sensor is still calibrating
+pub fn get_roll(port: SmartPort) -> Result<f64, PROSErr> {
+    // get the heading of the sensor
+    let heading = unsafe {
+        bindings::imu_get_roll(port as u8)
     };
 
     // check for errors
