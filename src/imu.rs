@@ -1,6 +1,6 @@
 //! # Inertial Sensor API
 
-use crate::{bindings, error::PROSErr, port::SmartPort};
+use crate::{bindings, error::{PROSErr, PROSResult}, port::SmartPort};
 
 /// Calibrate the IMU Sensor
 ///
@@ -11,9 +11,9 @@ use crate::{bindings, error::PROSErr, port::SmartPort};
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a Inertial Sensor
 /// - Returns `PROSErr::Again` if the sensor is already currently calibrating, or time out setting the status flag
 pub fn reset(port: SmartPort) -> Result<(), PROSErr> {
-    PROSErr::parse(unsafe {
+    unsafe {
         bindings::imu_reset(port as u8)
-    })
+    }.check().map(|_| ())
 }
 
 /// Gets the Inertial Sensor's heading relative to the initial direction of it's x-axis
@@ -25,16 +25,9 @@ pub fn reset(port: SmartPort) -> Result<(), PROSErr> {
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a Inertial Sensor
 /// - Returns `PROSErr::Again` if the sensor is still calibrating
 pub fn get_heading(port: SmartPort) -> Result<f64, PROSErr> {
-    // get the heading of the sensor
-    let heading = unsafe {
+    unsafe {
         bindings::imu_get_heading(port as u8)
-    };
-
-    // check for errors
-    PROSErr::parse(heading as i32)?;
-
-    // return heading
-    Ok(heading)
+    }.check()
 }
 
 /// Gets the Inertial Sensor's heading relative to the initial direction of it's x-axis
@@ -46,16 +39,9 @@ pub fn get_heading(port: SmartPort) -> Result<f64, PROSErr> {
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a Inertial Sensor
 /// - Returns `PROSErr::Again` if the sensor is still calibrating
 pub fn get_yaw(port: SmartPort) -> Result<f64, PROSErr> {
-    // get the heading of the sensor
-    let heading = unsafe {
+    unsafe {
         bindings::imu_get_yaw(port as u8)
-    };
-
-    // check for errors
-    PROSErr::parse(heading as i32)?;
-
-    // return heading
-    Ok(heading)
+    }.check()
 }
 
 /// Gets the Inertial Sensor's heading relative to the initial direction of it's x-axis
@@ -67,16 +53,9 @@ pub fn get_yaw(port: SmartPort) -> Result<f64, PROSErr> {
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a Inertial Sensor
 /// - Returns `PROSErr::Again` if the sensor is still calibrating
 pub fn get_pitch(port: SmartPort) -> Result<f64, PROSErr> {
-    // get the heading of the sensor
-    let heading = unsafe {
+    unsafe {
         bindings::imu_get_pitch(port as u8)
-    };
-
-    // check for errors
-    PROSErr::parse(heading as i32)?;
-
-    // return heading
-    Ok(heading)
+    }.check()
 }
 
 /// Gets the Inertial Sensor's heading relative to the initial direction of it's x-axis
@@ -88,16 +67,9 @@ pub fn get_pitch(port: SmartPort) -> Result<f64, PROSErr> {
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a Inertial Sensor
 /// - Returns `PROSErr::Again` if the sensor is still calibrating
 pub fn get_roll(port: SmartPort) -> Result<f64, PROSErr> {
-    // get the heading of the sensor
-    let heading = unsafe {
+    unsafe {
         bindings::imu_get_roll(port as u8)
-    };
-
-    // check for errors
-    PROSErr::parse(heading as i32)?;
-
-    // return heading
-    Ok(heading)
+    }.check()
 }
 
 /// Resets all 5 values of the Interial Sensor to 0
@@ -107,8 +79,7 @@ pub fn get_roll(port: SmartPort) -> Result<f64, PROSErr> {
 /// - Returns `PROSErr::NoDev` if the port cannot be configured as a Inertial Sensor
 /// - Returns `PROSErr::Again` if the sensor is still calibrating
 pub fn tare(port: SmartPort) -> Result<(), PROSErr> {
-    // perform the tare and wrap any errors
-    PROSErr::parse(unsafe {
+    unsafe {
         bindings::imu_tare(port as u8)
-    })
+    }.check().map(|_| ())
 }

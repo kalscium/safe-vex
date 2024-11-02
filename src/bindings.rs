@@ -9,4 +9,10 @@
 
 pub use libc::*;
 
+// need to manually declare until https://github.com/rust-lang/libc/issues/1995 is resolved.
+extern "C" {
+    /// Gets a mutable pointer to the C/C++ `errno` value
+    pub fn __errno() -> *mut i32;
+}
+
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));

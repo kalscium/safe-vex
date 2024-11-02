@@ -2,7 +2,7 @@
 
 use alloc::ffi::CString;
 
-use crate::{bindings, error::PROSErr};
+use crate::{bindings, error::{PROSErr, PROSResult}};
 
 /// A controller that you can read from
 #[derive(Debug, Clone, Copy)]
@@ -65,18 +65,9 @@ pub enum ControllerDigital {
 /// Returns `PROSErr::Access` if another resource is currently trying to access the controller
 /// Returns `0` if the controller is not connected
 pub fn get_analog(controller: Controller, analog: ControllerAnalog) -> Result<i8, PROSErr> {
-    // get the analog value of the controller joystick
-    let code = unsafe {
+    unsafe {
         bindings::controller_get_analog(controller as u32, analog as u32)
-    };
-
-    // check for errors
-    if let Err(err) = PROSErr::parse(code) {
-        return Err(err);
-    }
-
-    // return valid analog controller input
-    Ok(code as i8)
+    }.check().map(|x| x as i8)
 }
 
 /// Returns the digital value of a controller button
@@ -86,18 +77,9 @@ pub fn get_analog(controller: Controller, analog: ControllerAnalog) -> Result<i8
 /// Returns `PROSErr::Access` if another resource is currently trying to access the controller
 /// Returns `false` if the controller is not connected
 pub fn get_digital(controller: Controller, digital: ControllerDigital) -> Result<bool, PROSErr> {
-    // get the analog value of the controller joystick
-    let code = unsafe {
+    unsafe {
         bindings::controller_get_digital(controller as u32, digital as u32)
-    };
-
-    // check for errors
-    if let Err(err) = PROSErr::parse(code) {
-        return Err(err);
-    }
-
-    // return valid analog controller input
-    Ok(code != 0)
+    }.check().map(|x| x != 0)
 }
 
 /// Rumbles the controller
@@ -109,8 +91,8 @@ pub fn get_digital(controller: Controller, digital: ControllerDigital) -> Result
 /// Returns `PROSErr::Access` if another resource is currently trying to access the controller
 pub fn rumble(controller: Controller, rumble_pattern: &str) -> Result<(), PROSErr> {
     // rumble the controller
-    PROSErr::parse(unsafe {
+    unsafe {
         let rumble_pattern = CString::new(rumble_pattern).unwrap();
         bindings::controller_rumble(controller as u32, rumble_pattern.as_ptr() as *const u8)
-    })
+    }.check().map(|_| ())
 }

@@ -1,6 +1,6 @@
 //! # ADI API
 
-use crate::{bindings, error::PROSErr, port::AdiPort};
+use crate::{bindings, error::{PROSErr, PROSResult}, port::AdiPort};
 
 /// An Adi configuration
 #[derive(Debug, Clone, Copy)]
@@ -37,9 +37,9 @@ pub fn set_config(port: AdiPort, config: AdiConfig)  {
 /// This function is marked unsafe due to it depending on the Adi port having previously being configured as the kind of Adi port that is expected by this function
 pub unsafe fn digital_write(port: AdiPort, val: bool) -> Result<(), PROSErr> {
     // write to the digital ADI output and wrap any errors
-    PROSErr::parse(unsafe {
+    unsafe {
         bindings::adi_digital_write(port as u8, val)
-    })
+    }.check().map(|_| ())
 }
 
 /// **Warning:** ADI port must be configured prior to this function call
@@ -54,14 +54,7 @@ pub unsafe fn digital_write(port: AdiPort, val: bool) -> Result<(), PROSErr> {
 ///
 /// This function is marked unsafe due to it depending on the Adi port having previously being configured as the kind of Adi port that is expected by this function
 pub unsafe fn digital_read(port: AdiPort) -> Result<bool, PROSErr> {
-    // read the digital value from the adi port
-    let code = unsafe {
+    unsafe {
         bindings::adi_digital_read(port as u8)
-    };
-
-    // check for errors
-    PROSErr::parse(code)?; 
-
-    // return the digital output
-    Ok(code != 0)
+    }.check().map(|val| val != 0)
 }
