@@ -1,6 +1,6 @@
 [package]
 name = "safe-vex"
-version = "4.1.0"
+version = "4.2.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "A modular, safe and data-orientated rust wrapper over the Purdue PROS library for Vex Robotics"
@@ -16,11 +16,12 @@ name = "safe_vex"
 path = "src/lib.rs"
 
 [dependencies]
-libc = { version = "0.2.159", default-features = false }
-libc-print = "0.1.23"
-newlib-alloc = "0.1.0"
+libc = { version = "0.2", default-features = false }
+libc-print = "0.1"
+newlib-alloc = "0.1"
+byte-strings = "0.3"
 
 [build-dependencies]
-zip = "2.2.0"
-zip-extensions = "0.8.1"
-bindgen = "0.70.1"
+zip = "2.2"
+zip-extensions = "0.8"
+bindgen = "0.70"
