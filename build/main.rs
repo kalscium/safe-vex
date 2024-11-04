@@ -174,6 +174,8 @@ const WHITELISTED_FUNCS: &[&str] = &[
     "task_get_state",
     "task_notify",
     "task_notify_take",
+    "usd_is_installed",
+    "usd_list_files",
 ];
 
 // Variables to be included by bindgen

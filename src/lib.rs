@@ -19,6 +19,7 @@ pub mod motor;
 pub mod adi;
 pub mod controller;
 pub mod imu;
+pub mod fs;
 
 /// Handles the program's panics
 #[panic_handler]

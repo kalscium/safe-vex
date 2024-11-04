@@ -14,25 +14,41 @@ extern "C" {
 pub enum PROSErr {
     /// No errors
     None = 0,
+    /// No such file or directory
+    NoEntry = 2,
+    /// I/O error
+    IO = 5,
+    /// No such device or address
+    NXIO = 6,
     /// No more processes
     Again = 11,
     /// Permission denied
     Access = 13,
+    /// Mount device busy
+    Busy = 16,
+    /// File exists
+    Exists = 17,
     /// No such device
     NoDev = 19,
+    /// Invalid argument
+    Invalid = 22,
+    /// Read-only file system
+    ReadOnlyFS = 30,
+    /// No more files
+    NoMoreFiles = 89,
+    /// No buffer space available
+    NoBuffSpace = 105,
     /// Address already in use or not configured correctly
     AddrInUse = 112,
 }
 
 /// Generates a [`PROSError`] from the value of `errno` for the current task
 pub fn from_errno() -> PROSErr {
-    match unsafe { *__errno() } {
-        0 => PROSErr::None,
-        11 => PROSErr::Again,
-        13 => PROSErr::Access,
-        19 => PROSErr::NoDev,
-        112 => PROSErr::AddrInUse,
-        _ => unreachable!(),
+    unsafe {
+        // get errno pointer
+        let errno: *const i32 = __errno() as *const i32;
+        // cast the errno to a PROSErr through pointer magic
+        *(errno as *const PROSErr) // transmute would also work here too but this looks cooler
     }
 }
 
