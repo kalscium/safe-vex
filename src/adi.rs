@@ -24,10 +24,10 @@ pub fn set_config(port: AdiPort, config: AdiConfig)  {
     }
 }
 
-/// **Warning:** ADI port must be configured prior to this function call
-/// 
 /// Sends an outbound digital signal to a **configured** ADI port
 ///
+/// **Warning:** ADI port must be configured prior to this function call
+/// 
 /// # Errors
 /// 
 /// - Returns `PROSErr::AddrInUse` if the ADI port is not configured correctly
@@ -42,10 +42,10 @@ pub unsafe fn digital_write(port: AdiPort, val: bool) -> Result<(), PROSErr> {
     }.check().map(|_| ())
 }
 
-/// **Warning:** ADI port must be configured prior to this function call
-/// 
 /// Reads an inbound digital signal from a **configured** ADI port
 ///
+/// **Warning:** ADI port must be configured prior to this function call
+/// 
 /// # Errors
 /// 
 /// - Returns `PROSErr::AddrInUse` if the ADI port is not configured correctly

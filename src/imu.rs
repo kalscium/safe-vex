@@ -18,7 +18,7 @@ pub fn reset(port: SmartPort) -> Result<(), PROSErr> {
 
 /// Gets the Inertial Sensor's heading relative to the initial direction of it's x-axis
 ///
-/// This value is bounded by `0..=360`///
+/// This value is bounded by `0..=360`
 ///
 /// # Errors
 ///

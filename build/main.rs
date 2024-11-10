@@ -148,6 +148,7 @@ const WHITELISTED_FUNCS: &[&str] = &[
     "rotation_reverse",
     "rotation_set_position",
     "rotation_set_reversed",
+    "rotation_set_data_rate",
     "sem_create",
     "sem_delete",
     "sem_get_count",
