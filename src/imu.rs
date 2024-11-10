@@ -18,7 +18,7 @@ pub fn reset(port: SmartPort) -> Result<(), PROSErr> {
 
 /// Gets the Inertial Sensor's heading relative to the initial direction of it's x-axis
 ///
-/// This value is bounded by `0..=360`
+/// This value is bounded by `0..=360`///
 ///
 /// # Errors
 ///
@@ -82,4 +82,45 @@ pub fn tare(port: SmartPort) -> Result<(), PROSErr> {
     unsafe {
         bindings::imu_tare(port as u8)
     }.check().map(|_| ())
+}
+
+/// Sets the Inertial Sensor's refresh interval in milliseconds
+///
+/// # Errors
+///
+/// - Returns `PROSErr::NoDev` if the port cannot be configured as a Inertial Sensor
+/// - Returns `PROSErr::Again` if the sensor is still calibrating
+pub fn set_data_rate(port: SmartPort, rate: u32) -> Result<(), PROSErr> {
+    unsafe {
+        bindings::imu_set_data_rate(port as u8, rate)
+    }.check().map(|_| ())
+}
+
+/// Raw Accelerometer values
+pub struct Acceleration {
+    /// accelleration in the x axis
+    pub x: f64,
+    /// accelleration in the y axis
+    pub y: f64,
+    /// accelleration in the z axis
+    pub z: f64,
+}
+
+/// Gets the Inertial Sensor's raw accelerometer values
+///
+/// # Errors
+///
+/// - Returns `PROSErr::NoDev` if the port cannot be configured as a Inertial Sensor
+/// - Returns `PROSErr::Again` if the sensor is still calibrating
+pub fn get_accel(port: SmartPort) -> Result<Acceleration, PROSErr> {
+    unsafe {
+        let accel = bindings::imu_get_accel(port as u8);
+        accel.x.check()?; // check for errors
+
+        Ok(Acceleration {
+            x: accel.x,
+            y: accel.y,
+            z: accel.z,
+        })
+    }
 }

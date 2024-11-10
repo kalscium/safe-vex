@@ -92,6 +92,7 @@ const WHITELISTED_FUNCS: &[&str] = &[
     "imu_tare_yaw",
     "imu_tare_euler",
     "imu_tare",
+    "imu_set_data_rate",
     "imu_set_euler",
     "imu_set_rotation",
     "imu_set_heading",
